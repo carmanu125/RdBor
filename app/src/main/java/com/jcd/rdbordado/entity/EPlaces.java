@@ -15,6 +15,15 @@ public class EPlaces {
     private String email ;
     private String latLong ;
     private String Ranking ;
+    private String photo_url ;
+
+    public String getPhoto_url() {
+        return photo_url;
+    }
+
+    public void setPhoto_url(String photo_url) {
+        this.photo_url = photo_url;
+    }
 
     public int getId() {
         return id;
