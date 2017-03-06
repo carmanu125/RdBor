@@ -1,7 +1,9 @@
 package com.jcd.rdbordado.ws;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
+import com.google.gson.Gson;
 import com.jcd.rdbordado.entity.EPlaces;
 
 import org.json.JSONArray;
@@ -16,6 +18,7 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Argosoft03 on 02/03/2017.
@@ -24,8 +27,8 @@ import java.util.ArrayList;
 public class WebServicesRutDB {
 
 
-    private final String URL_WEB_SERVICES = "http://http://192.168.1.133:56394/api/";
-    private final String URL_GET_PLACES = "Places/Places/";
+    private final String URL_WEB_SERVICES = "http://rutabordado.somee.com/api/";
+    private final String URL_GET_PLACES = "Places/places/";
 
 
 
@@ -46,6 +49,8 @@ public class WebServicesRutDB {
                 HttpURLConnection urlConnection = null;
 
                 URL url = new URL(URL_WEB_SERVICES + URL_GET_PLACES);
+
+                Log.e("URL WS: ", url.toString());
 
                 urlConnection = (HttpURLConnection) url.openConnection();
 
@@ -74,16 +79,19 @@ public class WebServicesRutDB {
 
                 jsonString = sb.toString();
 
-                System.out.println("JSON: " + jsonString);
+                Log.e("JSON: " , jsonString);
+
+                //Gson gson = new Gson();
+                //Places frutas = gson.fromJson(jsonString, EPlaces.class);
 
                 JSONObject jObject = new JSONObject(jsonString);
 
-                //JSONArray myClients = jObject.getJSONArray("stocks_Stocks]");
+                JSONArray myClients = jObject.getJSONArray("stocks_Stocks]");
                 //JSONArray myClients = jObject.getJSONArray("");
 
-                //for (int i = 0; i < myClients.length(); i++) {
-                //    JSONObject obj = myClients.getJSONObject(i);
-                for (int i = 0; i < jObject.length(); i++) {
+                for (int i = 0; i < myClients.length(); i++) {
+                    JSONObject obj = myClients.getJSONObject(i);
+                //for (int i = 0; i < jObject.length(); i++) {
                     //JSONObject obj = jObject.getJSONObject(i);
 /*
                     result += "Posicion_: " + i + "\n";

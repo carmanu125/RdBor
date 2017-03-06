@@ -33,15 +33,15 @@ public class ProfilePlacesActivity extends AppCompatActivity implements AdapterV
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_places);
 
-
-
-
         place = (EPlaces) getIntent().getSerializableExtra("Place");
 
         gallery = (Gallery) findViewById(R.id.gallery1);
         imProfile = (ImageView) findViewById(R.id.img_profile_place_photo);
         txtDescription = (TextView) findViewById(R.id.txt_profile_place_description);
 
+        txtDescription.setText("Frixio es una empresa dedicada al diseño y confeccion de prendas de vestir bordadas a mano, estamos comprometidos con diseñar prendas exclusivas, innovadoras y de alta calidad, ofrecer una excelente atención a nuestros clientes y realizar los despachos de manera oportuna.\n" +
+                "Mision: Ser la empresa líder en la fabricación y comercialización de prendas de vestir bordadas a mano, comprometida con la calidad del producto, innovación y diseños ajustados a la petición de nuestros clientes. actualizando los requerimiento de tecnología y mercadeo adecuado donde cada proceso cumpla con los estandares de la más alta calidad sin perder la escencia del arte manual de los bordados de Cartago.\n" +
+                "Visión: Continuar siendo la empresa líder a nivel nacional de los bordados hechos a mano y consolidar nuestro mercado internacional con la dinámica y compromiso social que nos ha caracterizado.");
 
         //adapterGallery = new ImageGalleryAdapter(this, );
         gallery.setOnItemSelectedListener(this);
@@ -54,7 +54,7 @@ public class ProfilePlacesActivity extends AppCompatActivity implements AdapterV
     private ArrayList<Bitmap> getListImageBitmap() {
 
         lisImage = new ArrayList<>();
-        //txtDescription.setText(place.getDescription());
+
         new DownloadImageTask(adapterGallery, gallery, imProfile, this).execute("http://bordadosdecartago.com/wp-content/uploads/2015/08/descarga.png","https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSRCqfSgPrFdgPDxu4XKx1sc7DamVjFO-9Fwva9eZi7xspg356Z8BkigMg", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSNvCSNziQNvbn6KxJ33afBILIQq_xqleE5_TbbLfSWYkir1wvk", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSFShIyhcBwy9dl2Juslotxrzz2sivNZu58J_MnGBMe-a3_E3bUtw");
 
         return lisImage;
@@ -68,8 +68,7 @@ public class ProfilePlacesActivity extends AppCompatActivity implements AdapterV
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        Toast.makeText(getBaseContext(),"pic" + (position + 1) + " selected",
-                Toast.LENGTH_SHORT).show();
+
         // display the images selected
         ImageView imageView = (ImageView) findViewById(R.id.img_profile_place_photo);
         Bitmap bitmap = (Bitmap) parent.getItemAtPosition(position);;
