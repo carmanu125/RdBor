@@ -6,8 +6,10 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 
+import android.location.Criteria;
 import android.location.Location;
 
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.support.v4.app.ActivityCompat;
@@ -17,13 +19,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Spinner;
 
-
-import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -38,33 +40,25 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
+import static com.google.ads.AdRequest.LOGTAG;
+
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener, LocationListener {
 
     private GoogleMap mMap;
     Spinner spiPlaces;
-    LocationManager mLocationManager;
 
-    Location location; // location
     double latitude; // latitude
     double longitude; // longitude
 
 
     Polyline line;
-
-    // flag for GPS status
-    public boolean isGPSEnabled = false;
-
-    // flag for network status
-    boolean isNetworkEnabled = false;
-
-    // flag for GPS status
-    boolean canGetLocation = false;
-    LocationListener mLocationListener;
+    GoogleApiClient apiClient;
+    private static final int PETICION_PERMISO_LOCALIZACION = 101;
+    private static final int REQUEST_LOCATION = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,14 +69,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        mLocationListener = new LocationListener() {
-            @Override
-            public void onLocationChanged(Location location) {
-
-            }
-        };
-
-        mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
     }
 
@@ -129,12 +115,52 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public void trazarRuta(View view) {
 
-        getLocation();
-        String urlTopass = makeURL(location.getLatitude(),
-                location.getLongitude(), 4.750513,
-                -75.902918);
-        new connectAsyncTask(urlTopass, this).execute();
+        llamarAsyncTask();
     }
+
+    private void llamarAsyncTask() {
+
+        LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
+        // Creating a criteria object to retrieve provider
+        Criteria criteria = new Criteria();
+
+        // Getting the name of the best provider
+        String provider = locationManager.getBestProvider(criteria, true);
+
+
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+
+            // Check Permissions Now
+            ActivityCompat.requestPermissions(this,
+                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                    REQUEST_LOCATION);
+
+            return;
+        }else{
+        Location location = locationManager.getLastKnownLocation(provider);
+
+        if(location!=null){
+            onLocationChanged(location);
+        }
+        locationManager.requestLocationUpdates(provider, 3000, 5000, this);
+
+
+        String urlTopass = makeURL(latitude, longitude,
+                4.750513, -75.902918);
+        new connectAsyncTask(urlTopass, this).execute();
+        }
+    }
+
+
+
 
     private String makeURL(double init_latitude, double init_longitude, double end_latitude, double end_longitude) {
         StringBuilder urlString = new StringBuilder();
@@ -152,78 +178,63 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
 
-    public Location getLocation() {
-        try {
-            mLocationManager = (LocationManager) this
-                    .getSystemService(Context.LOCATION_SERVICE);
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
 
-            // getting GPS status
-            isGPSEnabled = mLocationManager
-                    .isProviderEnabled(LocationManager.GPS_PROVIDER);
-
-            Log.v("isGPSEnabled", "=" + isGPSEnabled);
-
-            // getting network status
-            isNetworkEnabled = mLocationManager
-                    .isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-
-            Log.v("isNetworkEnabled", "=" + isNetworkEnabled);
-
-            if (isGPSEnabled == false && isNetworkEnabled == false) {
-                // no network provider is enabled
+        if (requestCode == REQUEST_LOCATION) {
+            if(grantResults.length == 1
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // We can now safely use the API we requested access to
+                llamarAsyncTask();
             } else {
-                this.canGetLocation = true;
-                if (isNetworkEnabled) {
-                    location = null;
-                    mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1,
-                            1, mLocationListener);
-
-                    if (mLocationManager != null) {
-                        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                            // TODO: Consider calling
-                            //    ActivityCompat#requestPermissions
-                            // here to request the missing permissions, and then overriding
-                            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                            //                                          int[] grantResults)
-                            // to handle the case where the user grants the permission. See the documentation
-                            // for ActivityCompat#requestPermissions for more details.
-                            return null;
-                        }
-                        location = mLocationManager
-                                .getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-                        if (location != null) {
-                            latitude = location.getLatitude();
-                            longitude = location.getLongitude();
-                        }
-                    }
-                }
-                // if GPS Enabled get lat/long using GPS Services
-                if (isGPSEnabled) {
-                    location=null;
-                    if (location == null) {
-                        mLocationManager.requestLocationUpdates(
-                                LocationManager.GPS_PROVIDER,
-                                1,
-                                1, mLocationListener);
-                        Log.d("GPS Enabled", "GPS Enabled");
-                        if (mLocationManager != null) {
-                            location = mLocationManager
-                                    .getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                            if (location != null) {
-                                latitude = location.getLatitude();
-                                longitude = location.getLongitude();
-                            }
-                        }
-                    }
-                }
+                // Permission was denied or request was cancelled
             }
-
-        } catch (Exception e) {
-            e.printStackTrace();
         }
+        if (requestCode == PETICION_PERMISO_LOCALIZACION) {
+            if (grantResults.length == 1
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-        return location;
+                //Permiso concedido
+
+                @SuppressWarnings("MissingPermission")
+                Location lastLocation =
+                        LocationServices.FusedLocationApi.getLastLocation(apiClient);
+
+                llamarAsyncTask();
+
+            } else {
+                //Permiso denegado:
+                //Deberíamos deshabilitar toda la funcionalidad relativa a la localización.
+
+                Log.e(LOGTAG, "Permiso denegado");
+            }
+        }
     }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        // Getting latitude of the current location
+        latitude = location.getLatitude();
+
+        // Getting longitude of the current location
+        longitude = location.getLongitude();
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
+    }
+
 
     private class connectAsyncTask extends AsyncTask<Void, Void, String> {
         private ProgressDialog progressDialog;
@@ -284,29 +295,27 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 HttpEntity httpEntity = httpResponse.getEntity();
                 is = httpEntity.getContent();*/
 
-
                 URL url = new URL(string_url);
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                connection.setDoInput(true);
-                connection.connect();
-                is = connection.getInputStream();
+                BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream()));
 
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            try {
-                BufferedReader reader = new BufferedReader(
-                        new InputStreamReader(is, "iso-8859-1"), 8);
+                //char[] buffer = new char[1024];
+
+                String jsonString = new String();
+
                 StringBuilder sb = new StringBuilder();
-                String line = null;
-                while ((line = reader.readLine()) != null) {
+                String line;
+
+                while ((line = br.readLine()) != null) {
                     sb.append(line + "");
                 }
 
                 json = sb.toString();
                 is.close();
+
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
             } catch (Exception e) {
                 Log.e("Buffer Error", "Error converting result " + e.toString());
             }
@@ -320,7 +329,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mMap.clear();
         }
         mMap.addMarker(new MarkerOptions().position(new LatLng(4.750513, -75.902918)));
-        mMap.addMarker(new MarkerOptions().position(new LatLng(location.getLatitude(), location.getLongitude())));
+        mMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)));
         try {
             // Tranform the string into a json object
             final JSONObject json = new JSONObject(result);
@@ -378,5 +387,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         return poly;
     }
+
 
 }
