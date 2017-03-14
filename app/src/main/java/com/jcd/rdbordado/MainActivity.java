@@ -24,8 +24,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void btRanking(View view) {
 
-        WebServicesRutDB ws = new WebServicesRutDB();
-        ws.getPlaces();
+        //WebServicesRutDB ws = new WebServicesRutDB();
+        //ws.getPlaces();
+
+        Intent ac = new Intent(this, RankingActivity.class);
+        startActivity(ac);
 
     }
 
@@ -33,5 +36,10 @@ public class MainActivity extends AppCompatActivity {
 
         Intent in = new Intent(this, ProfilePlacesActivity.class);
         startActivity(in);
+    }
+
+    public void btDiscount(View view) {
+        Intent ac = new Intent(this, DiscountActivity.class);
+        startActivity(ac);
     }
 }

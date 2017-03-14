@@ -9,30 +9,69 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.jcd.rdbordado.MainActivity"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@drawable/background_app">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="2"
+        android:layout_weight="3"
         android:id="@+id/main_bt_map"
-        android:text="Mapa"
-        android:onClick="btMap"/>
+        android:onClick="btMap"
+        android:text="Inicia"
+        android:background="@mipmap/button_large_default"
+        android:elevation="2dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1.2"/>
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="2"
+        android:layout_weight="3"
         android:id="@+id/main_bt_ranking"
-        android:text="Ranking"
-        android:onClick="btRanking"/>
+        android:padding="10dp"
+        android:text="Ranking "
+        android:onClick="btRanking"
+        android:background="@mipmap/button_large_ranking"
+        android:elevation="2dp"/>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1.2"/>
     <Button
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="2"
+        android:layout_weight="3"
         android:id="@+id/main_bt_video"
-        android:text="Video"
-        android:onClick="btVideo"/>
+        android:text="Directorio"
+        android:onClick="btVideo"
+        android:background="@mipmap/button_large_directorio"
+        android:elevation="2dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center">
+
+        <Button
+            android:layout_margin="2dp"
+            android:background="@color/colorPrimary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Descuentos"
+            android:layout_gravity="right"
+            android:onClick="btDiscount"/>
+    </LinearLayout>
+
 
 </LinearLayout>

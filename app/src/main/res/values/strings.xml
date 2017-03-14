@@ -2,12 +2,5 @@
     <string name="app_name">RutaDelBordado</string>
     <string name="title_activity_maps">Map</string>
 
-    <string-array name="items_spi_rutas">
-        <item>Frixio</item>
-        <item>Talle 1</item>
-        <item>Talle 2</item>
-        <item>Talle 3</item>
-        <item>Talle 4</item>
-        <item>Talle 5</item>
-    </string-array>
+
 </resources>

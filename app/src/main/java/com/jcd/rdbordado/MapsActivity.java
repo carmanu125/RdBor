@@ -1,7 +1,9 @@
 package com.jcd.rdbordado;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -17,6 +19,7 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -26,6 +29,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -54,6 +59,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     double latitude; // latitude
     double longitude; // longitude
 
+    String[] datosSpinner = new String[]{"Frixio","Talle 1","Talle 2","Talle 3","Talle 4","Talle 5"};
 
     Polyline line;
     GoogleApiClient apiClient;
@@ -64,12 +70,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
+        spiPlaces = (Spinner) findViewById(R.id.spi_maps_location);
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.item_spi_places, datosSpinner);
+        spiPlaces.setAdapter(adapter);
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
-
     }
 
 
@@ -115,7 +125,31 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public void trazarRuta(View view) {
 
-        llamarAsyncTask();
+        final LocationManager manager = (LocationManager) getSystemService( Context.LOCATION_SERVICE );
+
+        if ( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
+            buildAlertMessageNoGps();
+        }else{
+            llamarAsyncTask();
+        }
+    }
+
+    private void buildAlertMessageNoGps() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Se requiere que el GPS este activo, desea activarlo?")
+                .setCancelable(false)
+                .setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                    public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                        startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                        dialog.cancel();
+                    }
+                });
+        final AlertDialog alert = builder.create();
+        alert.show();
     }
 
     private void llamarAsyncTask() {
@@ -328,8 +362,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if (line != null) {
             mMap.clear();
         }
-        mMap.addMarker(new MarkerOptions().position(new LatLng(4.750513, -75.902918)));
-        mMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)));
+        BitmapDescriptor iconInit = BitmapDescriptorFactory.fromResource(R.mipmap.default_marker);
+        BitmapDescriptor iconFinish = BitmapDescriptorFactory.fromResource(R.mipmap.finish_marker);
+
+        mMap.addMarker(new MarkerOptions().position(new LatLng(4.750513, -75.902918)).icon(iconFinish));
+        mMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)).icon(iconInit));
         try {
             // Tranform the string into a json object
             final JSONObject json = new JSONObject(result);
