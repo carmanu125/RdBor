@@ -27,7 +27,7 @@ public class RankingActivity extends AppCompatActivity {
         getListPlaces();
 
         rcListaRanking = (RecyclerView) findViewById(R.id.rv_rank_lista);
-        adapterList = new RankingAdapter(listPlaces);
+        adapterList = new RankingAdapter(listPlaces, this);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         rcListaRanking.setLayoutManager(layoutManager);
         rcListaRanking.setAdapter(adapterList);

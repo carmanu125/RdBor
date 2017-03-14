@@ -1,5 +1,7 @@
 package com.jcd.rdbordado.adapters;
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.jcd.rdbordado.ProfilePlacesActivity;
 import com.jcd.rdbordado.R;
 import com.jcd.rdbordado.entity.EPlaces;
 
@@ -19,9 +22,11 @@ import java.util.List;
 public class RankingAdapter extends RecyclerView.Adapter<RankingAdapter.ContentHolder>{
 
     List<EPlaces> list;
+    static Context context;
 
-    public RankingAdapter(List<EPlaces> list) {
+    public RankingAdapter(List<EPlaces> list, Context context) {
         this.list = list;
+        this.context = context;
     }
 
     @Override
@@ -60,7 +65,8 @@ public class RankingAdapter extends RecyclerView.Adapter<RankingAdapter.ContentH
 
          @Override
          public void onClick(View v) {
-
+             Intent intent= new Intent(context, ProfilePlacesActivity.class);
+             context.startActivity(intent);
          }
 
          public void loadValuesItem(EPlaces places){

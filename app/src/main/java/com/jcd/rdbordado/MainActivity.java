@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void btVideo(View view) {
 
-        Intent in = new Intent(this, ProfilePlacesActivity.class);
+        Intent in = new Intent(this, RankingActivity.class);
         startActivity(in);
     }
 

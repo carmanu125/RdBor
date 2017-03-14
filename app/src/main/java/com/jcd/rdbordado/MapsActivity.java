@@ -115,13 +115,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public boolean onMarkerClick(Marker marker) {
 
+        try {
+            if (marker.getTag().equals("Frixio")) {
+                Intent intent = new Intent(this, ProfilePlacesActivity.class);
+                startActivity(intent);
+            }
 
-        if (marker.getTag().equals("Frixio")) {
-            Intent intent = new Intent(this, ProfilePlacesActivity.class);
-            startActivity(intent);
+        } catch (Exception e) {
+
         }
         return false;
     }
+
 
     public void trazarRuta(View view) {
 
@@ -154,6 +159,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void llamarAsyncTask() {
 
+        mMap.clear();
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
         // Creating a criteria object to retrieve provider
@@ -365,8 +371,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         BitmapDescriptor iconInit = BitmapDescriptorFactory.fromResource(R.mipmap.default_marker);
         BitmapDescriptor iconFinish = BitmapDescriptorFactory.fromResource(R.mipmap.finish_marker);
 
-        mMap.addMarker(new MarkerOptions().position(new LatLng(4.750513, -75.902918)).icon(iconFinish));
-        mMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)).icon(iconInit));
+        mMap.addMarker(new MarkerOptions().position(new LatLng(4.750513, -75.902918)).icon(iconFinish).title("Frixio"));
+        mMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)).icon(iconInit).title("Mi posicion"));
         try {
             // Tranform the string into a json object
             final JSONObject json = new JSONObject(result);
