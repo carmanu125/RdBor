@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -8,9 +7,22 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.jcd.rdbordado.MainActivity"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@mipmap/background_image">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="5"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/logo_cicle"
+            />
+
+    </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -20,10 +32,11 @@
             android:orientation="horizontal">
 
             <Button
-                android:layout_height="100dp"
-                android:layout_width="100dp"
+                android:layout_height="70dp"
+                android:layout_width="70dp"
                 android:background="@drawable/background_circle"
-                android:elevation="2dp"
+                android:textColor="@android:color/white"
+                android:elevation="10dp"
                 android:text="Inicia"
                 android:onClick="btMap"/>
             <Button
@@ -51,12 +64,14 @@
             android:orientation="horizontal">
 
             <Button
-                android:layout_height="100dp"
-                android:layout_width="100dp"
+                android:layout_height="70dp"
+                android:layout_width="70dp"
                 android:background="@drawable/background_circle"
+                android:textColor="@android:color/white"
                 android:onClick="btRanking"
                 android:text="Ranking "
-                android:elevation="2dp"/>
+                android:elevation="10dp"
+                />
 
             <Button
                 android:layout_height="match_parent"
@@ -87,9 +102,11 @@
         <Button
 
             android:background="@drawable/background_circle"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:textColor="@android:color/white"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
             android:text="Compras"
+            android:elevation="10dp"
             android:layout_gravity="right"
             android:onClick="btDiscount"/>
 
@@ -100,7 +117,8 @@
             android:layout_height="match_parent"
             android:text="Compra los mejores productos"
             android:textColor="@android:color/black"
-            android:layout_gravity="right"
+            android:gravity="center|left"
+            android:paddingLeft="15dp"
             android:onClick="btDiscount"/>
     </LinearLayout>
 
@@ -116,16 +134,18 @@
         android:gravity="center_vertical"
         android:orientation="horizontal">
         <Button
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
             android:text="Directorio"
             android:onClick="btVideo"
             android:background="@drawable/background_circle"
-            android:elevation="2dp"/>
+            android:textColor="@android:color/white"
+            android:elevation="10dp"
+            />
 
         <Button
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_weight="3"
             android:text="Conoce todos los bordados"
             android:onClick="btVideo"
