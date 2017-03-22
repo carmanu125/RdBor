@@ -1,9 +1,11 @@
 package com.jcd.rdbordado.ws;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.jcd.rdbordado.MainDrawerActivity;
 import com.jcd.rdbordado.entity.EPlaces;
 
 import org.json.JSONArray;
@@ -19,6 +21,8 @@ import java.net.ProtocolException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Created by Argosoft03 on 02/03/2017.
@@ -26,25 +30,36 @@ import java.util.List;
 
 public class WebServicesRutDB {
 
+    Context context;
 
-    private final String URL_WEB_SERVICES = "http://rutabordado.somee.com/api/";
+
+    //private final String URL_WEB_SERVICES = "http://rutabordado.somee.com/api/";
+    private final String URL_WEB_SERVICES = "http://192.168.1.110:56394/api/";
     private final String URL_GET_PLACES = "Places/places/";
 
 
-
+    public WebServicesRutDB(Context context) {
+        this.context = context;
+    }
 
     public void getPlaces(){
-        TareaWSListar listar = new TareaWSListar();
+        TareaWSListar listar = new TareaWSListar(context);
         listar.execute();
     }
 
-
     //Tarea Asíncrona para llamar al WS de listado en segundo plano
-    private class TareaWSListar extends AsyncTask<String,Integer,Boolean> {
+    private class TareaWSListar extends AsyncTask<String,Integer,List<EPlaces>> {
 
-        private ArrayList<EPlaces> listPlaces;
 
-        protected Boolean doInBackground(String... params) {
+
+        private List<EPlaces> listPlaces = new ArrayList<>();
+        Context context;
+
+        public TareaWSListar(Context context) {
+            this.context = context;
+        }
+
+        protected List<EPlaces> doInBackground(String... params) {
             try {
                 HttpURLConnection urlConnection = null;
 
@@ -84,26 +99,29 @@ public class WebServicesRutDB {
                 //Gson gson = new Gson();
                 //Places frutas = gson.fromJson(jsonString, EPlaces.class);
 
-                JSONObject jObject = new JSONObject(jsonString);
 
-                JSONArray myClients = jObject.getJSONArray("stocks_Stocks]");
-                //JSONArray myClients = jObject.getJSONArray("");
+                JSONArray respJSON = new JSONArray(jsonString);
 
-                for (int i = 0; i < myClients.length(); i++) {
-                    JSONObject obj = myClients.getJSONObject(i);
-                //for (int i = 0; i < jObject.length(); i++) {
-                    //JSONObject obj = jObject.getJSONObject(i);
-/*
-                    result += "Posicion_: " + i + "\n";
-                    result += "ID_STOCK _: " + obj.getString("id_stock") + "\n";
-                    result += "id_Product _: " + obj.getString("id_Product") + "\n";
-                    result += "Stock _: " + obj.getString("Stock") + "\n";
-                    result += "Value_Current _: " + obj.getString("Value_Current") + "\n";
-                    result += "Value_min _: " + obj.getString("Value_min") + "\n";
-                    result += "Value_MinPercent _: " + obj.getString("Value_MinPercent") + "\n";
-                    result += "date_last_update _: " + obj.getString("date_last_update") + "\n";
-                    result += "date_current _: " + obj.getString("date_current") + "\n";*/
+                //List<EPlaces> listPlaces = new ArrayList<>();
+
+                for(int i=0; i<respJSON.length(); i++)
+                {
+                    JSONObject obj = respJSON.getJSONObject(i);
+                    EPlaces places = new EPlaces();
+
+                    places.setId(obj.getInt("id"));
+                    places.setName(obj.getString("name"));
+                    places.setShort_description(obj.getString("short_description"));
+                    places.setDescription(obj.getString("description"));
+                    places.setAddress(obj.getString("address"));
+                    places.setPhone(obj.getString("phone"));
+                    places.setEmail(obj.getString("email"));
+                    places.setLatLong(obj.getString("latLong"));
+                    places.setRanking(obj.getString("Ranking"));
+
+                    listPlaces.add(places);
                 }
+
 
 
             } catch (ProtocolException e) {
@@ -115,21 +133,12 @@ public class WebServicesRutDB {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            return true;
+            return listPlaces;
         }
 
-        protected void onPostExecute(Boolean result) {
-/*
-            if (result)
-            {
-                //Rellenamos la lista con los nombres de los clientes
-                //Rellenamos la lista con los resultados
-                ArrayAdapter<String> adaptador =
-                        new ArrayAdapter<String>(MainActivity.this,
-                                android.R.layout.simple_list_item_1, clientes);
+        protected void onPostExecute(List<EPlaces> result) {
 
-                lstClientes.setAdapter(adaptador);
-            }*/
+            MainDrawerActivity.navigationView.getMenu().getItem(0).setChecked(true);
         }
     }
 

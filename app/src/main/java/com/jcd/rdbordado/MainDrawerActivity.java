@@ -18,8 +18,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.jcd.rdbordado.ws.WebServicesRutDB;
+
 public class MainDrawerActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    public static DrawerLayout drawer;
+    public static NavigationView navigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,14 +42,18 @@ public class MainDrawerActivity extends AppCompatActivity
             }
         });
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+
+        WebServicesRutDB webServicesRutDB =new WebServicesRutDB(this);
+        webServicesRutDB.getPlaces();
     }
 
     @Override
@@ -89,9 +98,10 @@ public class MainDrawerActivity extends AppCompatActivity
 
         if (id == R.id.nav_inicia) {
             Log.e("Fragment: ", "activity inicial");
-            fragment = new ProfilePlacesActivity();
+            //fragment = new ProfilePlacesActivity();
 
         } else if (id == R.id.nav_ranking) {
+            fragment = new RankingActivity();
 
         } else if (id == R.id.nav_compras) {
 
@@ -110,6 +120,7 @@ public class MainDrawerActivity extends AppCompatActivity
         item.setChecked(true);
         // Set action bar title
         setTitle(item.getTitle());
+        drawer.closeDrawers();
 
 
         return true;

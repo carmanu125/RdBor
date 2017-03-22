@@ -1,5 +1,6 @@
 package com.jcd.rdbordado.adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
@@ -22,9 +23,9 @@ import java.util.List;
 public class RankingAdapter extends RecyclerView.Adapter<RankingAdapter.ContentHolder>{
 
     List<EPlaces> list;
-    static Context context;
+    static Activity context;
 
-    public RankingAdapter(List<EPlaces> list, Context context) {
+    public RankingAdapter(List<EPlaces> list, Activity context) {
         this.list = list;
         this.context = context;
     }

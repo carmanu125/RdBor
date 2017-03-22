@@ -96,6 +96,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.setOnMarkerClickListener(this);
+        //Ocultando iconos
+        mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
 
 
         addMArker("Frixio", new LatLng(4.750513, -75.902918));
