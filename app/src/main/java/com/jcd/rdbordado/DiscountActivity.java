@@ -20,7 +20,7 @@ public class DiscountActivity extends Fragment implements View.OnClickListener {
 
     View view;
     Button btSacn;
-    TextView txtQrCode;
+    public static TextView txtQrCode;
 
     private static final String EXTRA_CODE = "QrCode";
 
@@ -57,8 +57,17 @@ public class DiscountActivity extends Fragment implements View.OnClickListener {
         try
         {
             String value = (String) getArguments().getSerializable(EXTRA_CODE);
-            WebServicesRutDB ws = new WebServicesRutDB(getContext());
-            ws.posDevices();
+            String url = WebServicesRutDB.URL_WEB_SERVICES + WebServicesRutDB.URL_POST_DEVICES;
+            if(value.equals(url)){
+
+                WebServicesRutDB ws = new WebServicesRutDB(getContext());
+                ws.posDevices();
+                value = "Por favor espere...";
+            }else{
+                Toast.makeText(getContext(), "El codigo Qr no es el indicado", Toast.LENGTH_SHORT).show();
+                value = "Intente de nuevo";
+            }
+
 
             return value;
         }catch (Exception e){

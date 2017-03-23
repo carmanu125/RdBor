@@ -23,6 +23,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
@@ -40,6 +41,9 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.jcd.rdbordado.adapters.SpinnerPlacesAdapter;
+import com.jcd.rdbordado.entity.EPlaces;
+import com.jcd.rdbordado.local.RutaDB;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -56,7 +60,7 @@ import java.util.List;
 import static android.content.Context.LOCATION_SERVICE;
 import static com.google.ads.AdRequest.LOGTAG;
 
-public class MapsActivity extends Fragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener, LocationListener, View.OnClickListener {
+public class MapsActivity extends Fragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener, LocationListener, View.OnClickListener, AdapterView.OnItemSelectedListener {
 
     private GoogleMap mMap;
     Spinner spiPlaces;
@@ -64,6 +68,7 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback, Google
 
     double latitude; // latitude
     double longitude; // longitude
+    int positionSpinner = 0;
 
     String[] datosSpinner = new String[]{"Frixio","Talle 1","Talle 2","Talle 3","Talle 4","Talle 5"};
 
@@ -71,18 +76,29 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback, Google
     GoogleApiClient apiClient;
     private static final int PETICION_PERMISO_LOCALIZACION = 101;
     private static final int REQUEST_LOCATION = 2;
+    SpinnerPlacesAdapter adapter;
+
+    RutaDB nDb;
 
     View view;
+    List<EPlaces> listPlaces;
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        nDb = new RutaDB(getContext());
+        getListPlaces();
+
+
         spiPlaces = (Spinner) view.findViewById(R.id.spi_maps_location);
         bt_maps_go = (Button) view.findViewById(R.id.bt_maps_go);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), R.layout.item_spi_places, datosSpinner);
+        //ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), R.layout.item_spi_places, datosSpinner);
+        adapter = new SpinnerPlacesAdapter(getContext(), listPlaces);
         spiPlaces.setAdapter(adapter);
+        spiPlaces.setOnItemSelectedListener(this);
+
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
@@ -90,6 +106,19 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback, Google
         mapFragment.getMapAsync(MapsActivity.this);
 
         bt_maps_go.setOnClickListener(this);
+    }
+
+    private List<EPlaces> getListPlaces() {
+        listPlaces = new ArrayList<>();
+
+        try {
+            nDb.openDB();
+            listPlaces = nDb.listPlaces();
+            nDb.closeDB();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return listPlaces;
     }
 
     @Nullable
@@ -115,18 +144,24 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback, Google
         //Ocultando iconos
         mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
 
+        int positionList = 0;
+        for (EPlaces places : listPlaces) {
 
-        addMArker("Frixio", new LatLng(4.750513, -75.902918));
-        addMArker("taller 2", new LatLng(4.750438, -75.904871));
-        addMArker("taller 3", new LatLng(4.750296, -75.909368));
-        addMArker("taller 4", new LatLng(4.749494, -75.908038));
-        addMArker("taller 5", new LatLng(4.749627, -75.905060));
+            String[] latlong = places.getLatLong().split(",");
+            double latitudeCurrent = Double.parseDouble(latlong[0]);
+            double longitudeCurrent = Double.parseDouble(latlong[1]);
+            String positionCurrent = String.valueOf(positionList);
+
+            addMArker(places.getName(), new LatLng(latitudeCurrent, longitudeCurrent), positionCurrent);
+            positionList++;
+        }
+
     }
 
-    private void addMArker(String tittle, LatLng latLong) {
+    private void addMArker(String tittle, LatLng latLong, String tag) {
         // Add a marker in Sydney and move the camera
 
-        mMap.addMarker(new MarkerOptions().position(latLong).title(tittle).snippet("Esta es una corta descripcion")).setTag(tittle);
+        mMap.addMarker(new MarkerOptions().position(latLong).title(tittle).snippet("Esta es una corta descripcion")).setTag(tag);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLong, 15f));
     }
 
@@ -134,10 +169,12 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback, Google
     public boolean onMarkerClick(Marker marker) {
 
         try {
-            if (marker.getTag().equals("Frixio")) {
-                Intent intent = new Intent(getActivity(), ProfilePlacesActivity.class);
-                startActivity(intent);
-            }
+            //if (marker.getTag().equals("Frixio")) {
+            Intent intent = new Intent(getActivity(), ProfilePlacesActivity.class);
+            int positionList = Integer.parseInt(marker.getTag().toString());
+            intent.putExtra("Place", listPlaces.get(positionList));
+            startActivity(intent);
+            //}
 
         } catch (Exception e) {
 
@@ -210,9 +247,12 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback, Google
         }
         locationManager.requestLocationUpdates(provider, 3000, 5000, this);
 
+            String[] latlong = listPlaces.get(positionSpinner).getLatLong().split(",");
+            double latitudePlaces = Double.parseDouble(latlong[0]);
+            double longitudePlaces = Double.parseDouble(latlong[1]);
 
         String urlTopass = makeURL(latitude, longitude,
-                4.750513, -75.902918);
+                latitudePlaces, longitudePlaces);
         new connectAsyncTask(urlTopass, getActivity()).execute();
         }
     }
@@ -296,6 +336,16 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback, Google
     @Override
     public void onClick(View v) {
         trazarRuta();
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        this.positionSpinner = position;
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
     }
 
 
@@ -394,7 +444,12 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback, Google
         BitmapDescriptor iconInit = BitmapDescriptorFactory.fromResource(R.mipmap.default_marker);
         BitmapDescriptor iconFinish = BitmapDescriptorFactory.fromResource(R.mipmap.finish_marker);
 
-        mMap.addMarker(new MarkerOptions().position(new LatLng(4.750513, -75.902918)).icon(iconFinish).title("Frixio"));
+        EPlaces places = listPlaces.get(positionSpinner);
+        String[] latlong = places.getLatLong().split(",");
+        double latitudePlaces = Double.parseDouble(latlong[0]);
+        double longitudePlaces = Double.parseDouble(latlong[1]);
+
+        mMap.addMarker(new MarkerOptions().position(new LatLng(latitudePlaces, longitudePlaces)).icon(iconFinish).title(places.getName()));
         mMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)).icon(iconInit).title("Mi posicion"));
         try {
             // Tranform the string into a json object

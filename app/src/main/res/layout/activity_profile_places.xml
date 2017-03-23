@@ -188,6 +188,7 @@
                 android:id="@+id/txt_profile_place_email"
                 android:textSize="25sp"
                 android:layout_toRightOf="@id/im_profile_icon2"
+                android:autoLink="all"
                 android:layout_below="@id/txt_profile_place_web_site"/>
 
             </RelativeLayout>

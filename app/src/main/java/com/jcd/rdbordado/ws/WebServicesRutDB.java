@@ -7,6 +7,7 @@ import android.os.Build;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.jcd.rdbordado.DiscountActivity;
 import com.jcd.rdbordado.MainDrawerActivity;
 import com.jcd.rdbordado.entity.EPlaces;
 import com.jcd.rdbordado.local.RutaDB;
@@ -39,10 +40,10 @@ public class WebServicesRutDB {
     MainDrawerActivity activity;
 
 
-    //private final String URL_WEB_SERVICES = "http://rutabordado.somee.com/api/";
-    private final String URL_WEB_SERVICES = "http://192.168.1.110:56394/api/";
+    public static final String URL_WEB_SERVICES = "http://www.rutabordado.somee.com/api/";
+    //public static final String URL_WEB_SERVICES = "http://192.168.1.110:56394/api/";
     private final String URL_GET_PLACES = "Places/places/";
-    private final String URL_POST_DEVICES = "Devices/discountInMarker/";
+    public static final String URL_POST_DEVICES = "Devices/discountInMarker/";
 
 
     public WebServicesRutDB(Context context, MainDrawerActivity activity) {
@@ -206,7 +207,8 @@ public class WebServicesRutDB {
 
                 HttpURLConnection urlConnection = null;
 
-                URL url = new URL(URL_WEB_SERVICES + URL_GET_PLACES);
+                URL url = new URL(URL_WEB_SERVICES + URL_POST_DEVICES);
+
                 Log.e("URL WS: ", url.toString());
 
                 urlConnection = (HttpURLConnection) url.openConnection();
@@ -214,75 +216,67 @@ public class WebServicesRutDB {
                 urlConnection.setRequestProperty("Accept", "application/json");
                 urlConnection.setRequestMethod("POST");
 
-                urlConnection.setReadTimeout(25000 /* milliseconds */);
-                urlConnection.setConnectTimeout(30000 /* milliseconds */);
+                urlConnection.setReadTimeout(10000 /* milliseconds */);
+                urlConnection.setConnectTimeout(15000 /* milliseconds */);
                 urlConnection.setDoOutput(true);
                 urlConnection.setDoInput(true);
 
-                JSONObject cliente = new JSONObject();
-                cliente.put("brand", Build.BRAND);
-                cliente.put("device", Build.DEVICE);
-                cliente.put("hardware", Build.HARDWARE);
+                JSONObject cliente   = new JSONObject();
+                //cliente.put("brand", Build.BRAND);
+                //cliente.put("device", Build.DEVICE);
+                //cliente.put("hardware", Build.HARDWARE);
                 cliente.put("imei", Build.ID);
                 cliente.put("model", Build.MODEL);
                 cliente.put("serial", Build.SERIAL);
                 cliente.put("user", Build.USER);
                 cliente.put("versionSdk", Build.VERSION.SDK);
 
+
                 OutputStreamWriter wr = new OutputStreamWriter(urlConnection.getOutputStream());
                 wr.write(cliente.toString());
                 wr.flush();
 
 
+                StringBuilder sb = new StringBuilder();
                 int HttpResult = urlConnection.getResponseCode();
                 if (HttpResult == HttpURLConnection.HTTP_OK) {
-
-
-                    BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(), "utf-8"));
-
-                    //char[] buffer = new char[1024];
-
-
-                    StringBuilder sb = new StringBuilder();
-                    String line;
+                    BufferedReader br = new BufferedReader(
+                            new InputStreamReader(urlConnection.getInputStream(), "utf-8"));
+                    String line = null;
                     while ((line = br.readLine()) != null) {
-                        sb.append(line);
+                        sb.append(line.replace("\"", ""));
                     }
                     br.close();
-
+                    System.out.println("" + sb.toString());
                     jsonString = sb.toString();
-
-
                 } else {
-                    return urlConnection.getResponseMessage();
+                    System.out.println(urlConnection.getResponseMessage());
+                    jsonString = urlConnection.getResponseMessage();
                 }
 
-
-            } catch (ProtocolException e) {
-                e.printStackTrace();
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (JSONException e) {
-                e.printStackTrace();
             }
+            catch(Exception ex)
+            {
+                Log.e("ServicioRest","Error!", ex);
+
+            }
+
             return jsonString;
 
         }
 
         @Override
-        protected void onPostExecute(String result) {
+        protected void onPostExecute(String valueResponse) {
 
-            if(result.equals("true")){
+            if(valueResponse.equals("True")){
                 //Correcto
-
-            } else if(result.equals("Error")){
+                DiscountActivity.txtQrCode.setText("Descuento Aceptado!");
+            } else if(valueResponse.equals("Error")){
                 //Ya Existe
-
+                DiscountActivity.txtQrCode.setText("No es posible, su descuento ya ha sido usado!");
             }else{
                 //No se encontro respuesta de insercion
-
+                DiscountActivity.txtQrCode.setText("No hubo conexion con el servidor");
             }
 
             progressDialog.dismiss();
