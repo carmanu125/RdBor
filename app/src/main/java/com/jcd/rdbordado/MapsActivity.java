@@ -14,12 +14,17 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
 
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -48,12 +53,14 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.content.Context.LOCATION_SERVICE;
 import static com.google.ads.AdRequest.LOGTAG;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener, LocationListener {
+public class MapsActivity extends Fragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener, LocationListener, View.OnClickListener {
 
     private GoogleMap mMap;
     Spinner spiPlaces;
+    Button bt_maps_go;
 
     double latitude; // latitude
     double longitude; // longitude
@@ -65,23 +72,32 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final int PETICION_PERMISO_LOCALIZACION = 101;
     private static final int REQUEST_LOCATION = 2;
 
+    View view;
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_maps);
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
-        spiPlaces = (Spinner) findViewById(R.id.spi_maps_location);
+        spiPlaces = (Spinner) view.findViewById(R.id.spi_maps_location);
+        bt_maps_go = (Button) view.findViewById(R.id.bt_maps_go);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.item_spi_places, datosSpinner);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), R.layout.item_spi_places, datosSpinner);
         spiPlaces.setAdapter(adapter);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
                 .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
+        mapFragment.getMapAsync(MapsActivity.this);
+
+        bt_maps_go.setOnClickListener(this);
     }
 
-
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        view = inflater.inflate(R.layout.activity_maps, container, false);
+        return view;
+    }
 
     /**
      * Manipulates the map once available.
@@ -119,7 +135,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         try {
             if (marker.getTag().equals("Frixio")) {
-                Intent intent = new Intent(this, ProfilePlacesActivity.class);
+                Intent intent = new Intent(getActivity(), ProfilePlacesActivity.class);
                 startActivity(intent);
             }
 
@@ -130,9 +146,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
 
-    public void trazarRuta(View view) {
+    public void trazarRuta() {
 
-        final LocationManager manager = (LocationManager) getSystemService( Context.LOCATION_SERVICE );
+        final LocationManager manager = (LocationManager) getActivity().getSystemService( LOCATION_SERVICE );
 
         if ( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
             buildAlertMessageNoGps();
@@ -142,7 +158,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void buildAlertMessageNoGps() {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setMessage("Se requiere que el GPS este activo, desea activarlo?")
                 .setCancelable(false)
                 .setPositiveButton("Si", new DialogInterface.OnClickListener() {
@@ -162,7 +178,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void llamarAsyncTask() {
 
         mMap.clear();
-        LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        LocationManager locationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
 
         // Creating a criteria object to retrieve provider
         Criteria criteria = new Criteria();
@@ -171,7 +187,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         String provider = locationManager.getBestProvider(criteria, true);
 
 
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
@@ -181,7 +197,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             // for ActivityCompat#requestPermissions for more details.
 
             // Check Permissions Now
-            ActivityCompat.requestPermissions(this,
+            ActivityCompat.requestPermissions(getActivity(),
                     new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
                     REQUEST_LOCATION);
 
@@ -197,7 +213,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         String urlTopass = makeURL(latitude, longitude,
                 4.750513, -75.902918);
-        new connectAsyncTask(urlTopass, this).execute();
+        new connectAsyncTask(urlTopass, getActivity()).execute();
         }
     }
 
@@ -275,6 +291,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onProviderDisabled(String provider) {
 
+    }
+
+    @Override
+    public void onClick(View v) {
+        trazarRuta();
     }
 
 

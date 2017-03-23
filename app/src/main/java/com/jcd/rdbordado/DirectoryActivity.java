@@ -11,31 +11,31 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.jcd.rdbordado.adapters.DirectoryAdapter;
 import com.jcd.rdbordado.adapters.RankingAdapter;
 import com.jcd.rdbordado.entity.EPlaces;
 import com.jcd.rdbordado.local.RutaDB;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class RankingActivity extends Fragment {
+public class DirectoryActivity extends Fragment {
 
     List<EPlaces> listPlaces;
 
     RecyclerView rcListaRanking;
-    RankingAdapter adapterList;
+    DirectoryAdapter adapterList;
 
 
     RutaDB nDB;
+
     View view;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.activity_ranking, container, false);
+        view = inflater.inflate(R.layout.activity_directory, container, false);
         return view;
     }
-
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -45,8 +45,8 @@ public class RankingActivity extends Fragment {
 
         getListPlaces();
 
-        rcListaRanking = (RecyclerView) view.findViewById(R.id.rv_rank_lista);
-        adapterList = new RankingAdapter(listPlaces, getActivity());
+        rcListaRanking = (RecyclerView) view.findViewById(R.id.rv_direct_lista);
+        adapterList = new DirectoryAdapter(listPlaces, getActivity());
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         rcListaRanking.setLayoutManager(layoutManager);
         rcListaRanking.setAdapter(adapterList);
@@ -59,7 +59,7 @@ public class RankingActivity extends Fragment {
         try {
             nDB.openDB();
 
-            listPlaces = nDB.listPlacesTop10();
+            listPlaces = nDB.listPlaces();
             nDB.closeDB();
 
         } catch (Exception e) {

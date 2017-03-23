@@ -1,10 +1,12 @@
 package com.jcd.rdbordado.entity;
 
+import java.io.Serializable;
+
 /**
  * Created by Argosoft03 on 02/03/2017.
  */
 
-public class EPlaces {
+public class EPlaces implements Serializable{
 
     private int id ;
     private String name ;

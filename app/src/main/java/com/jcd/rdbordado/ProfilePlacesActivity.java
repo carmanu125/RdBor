@@ -1,39 +1,35 @@
 package com.jcd.rdbordado;
 
-import android.*;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.PersistableBundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Gallery;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.jcd.rdbordado.adapters.ImageGalleryAdapter;
 import com.jcd.rdbordado.async.DownloadImageTask;
 import com.jcd.rdbordado.entity.EPlaces;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
-public class ProfilePlacesActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+public class ProfilePlacesActivity extends Activity implements AdapterView.OnItemSelectedListener {
 
     ImageView imProfile;
     TextView txtDescription;
+    TextView txtAddress;
+    TextView txtEmail;
+    TextView txtName;
+    TextView txtShort;
+
     public static Gallery gallery;
 
     //EPlaces place;
@@ -41,7 +37,7 @@ public class ProfilePlacesActivity extends AppCompatActivity implements AdapterV
 
     public static ImageGalleryAdapter adapterGallery;
 
-
+    EPlaces place;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -49,13 +45,21 @@ public class ProfilePlacesActivity extends AppCompatActivity implements AdapterV
         setContentView(R.layout.activity_profile_places);
 
         Log.e("Activity, " , "Profiles");
-        //place = (EPlaces) getActivity().getIntent().getSerializableExtra("Place");
+        place = (EPlaces) getIntent().getSerializableExtra("Place");
 
         gallery = (Gallery) findViewById(R.id.gallery1);
         imProfile = (ImageView) findViewById(R.id.img_profile_place_photo);
         txtDescription = (TextView) findViewById(R.id.txt_profile_place_description);
+        txtAddress = (TextView) findViewById(R.id.txt_profile_place_add_current);
+        txtEmail = (TextView) findViewById(R.id.txt_profile_place_email);
+        txtName = (TextView) findViewById(R.id.txt_profile_place_name);
+        txtShort = (TextView) findViewById(R.id.txt_profile_place_short);
 
-        txtDescription.setText("");
+        txtDescription.setText(place.getDescription());
+        txtAddress.setText(place.getAddress());
+        txtEmail.setText(place.getEmail());
+        txtName.setText(place.getName());
+        txtShort.setText(place.getShort_description());
 
         //adapterGallery = new ImageGalleryAdapter(this, );
         gallery.setOnItemSelectedListener(ProfilePlacesActivity.this);
@@ -95,7 +99,7 @@ public class ProfilePlacesActivity extends AppCompatActivity implements AdapterV
     public void CallPlace(View view) {
         Intent intent = new Intent(Intent.ACTION_CALL);
 
-        intent.setData(Uri.parse("tel:3153734001"));
+        intent.setData(Uri.parse("tel:" + place.getPhone()));
 
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling

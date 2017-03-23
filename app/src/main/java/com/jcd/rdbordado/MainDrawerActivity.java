@@ -1,6 +1,7 @@
 package com.jcd.rdbordado;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -18,6 +19,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 import com.jcd.rdbordado.ws.WebServicesRutDB;
 
 public class MainDrawerActivity extends AppCompatActivity
@@ -33,14 +36,14 @@ public class MainDrawerActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        //FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        /*fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
-        });
+        });*/
 
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -52,7 +55,7 @@ public class MainDrawerActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
 
-        WebServicesRutDB webServicesRutDB =new WebServicesRutDB(this);
+        WebServicesRutDB webServicesRutDB =new WebServicesRutDB(this, this);
         webServicesRutDB.getPlaces();
     }
 
@@ -98,15 +101,16 @@ public class MainDrawerActivity extends AppCompatActivity
 
         if (id == R.id.nav_inicia) {
             Log.e("Fragment: ", "activity inicial");
-            //fragment = new ProfilePlacesActivity();
+            fragment = new MapsActivity();
 
         } else if (id == R.id.nav_ranking) {
             fragment = new RankingActivity();
 
         } else if (id == R.id.nav_compras) {
+            fragment = new DiscountActivity();
 
         } else if (id == R.id.nav_directorio) {
-
+            fragment = new DirectoryActivity();
         }
 /*
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -124,5 +128,23 @@ public class MainDrawerActivity extends AppCompatActivity
 
 
         return true;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        System.out.println("the code is catch");
+
+        IntentResult scanResult = IntentIntegrator.parseActivityResult(
+                requestCode, resultCode, data);
+// handle scan result
+        if (scanResult != null) {
+            FragmentManager fm = getSupportFragmentManager();
+
+            Fragment newFrame = DiscountActivity.newInstance(scanResult.getContents());
+
+            fm.beginTransaction().replace(R.id.flContent, newFrame).commit();
+        }
+
     }
 }

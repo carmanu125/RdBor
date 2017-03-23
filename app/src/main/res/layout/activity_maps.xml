@@ -35,7 +35,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="ir"
-            android:onClick="trazarRuta"
+            android:id="@+id/bt_maps_go"
             android:textColor="@color/colorPrimary"/>
 
     </LinearLayout>

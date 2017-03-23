@@ -14,6 +14,7 @@ import com.jcd.rdbordado.ProfilePlacesActivity;
 import com.jcd.rdbordado.R;
 import com.jcd.rdbordado.entity.EPlaces;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -22,7 +23,7 @@ import java.util.List;
 
 public class RankingAdapter extends RecyclerView.Adapter<RankingAdapter.ContentHolder>{
 
-    List<EPlaces> list;
+    static List<EPlaces> list;
     static Activity context;
 
     public RankingAdapter(List<EPlaces> list, Activity context) {
@@ -67,6 +68,8 @@ public class RankingAdapter extends RecyclerView.Adapter<RankingAdapter.ContentH
          @Override
          public void onClick(View v) {
              Intent intent= new Intent(context, ProfilePlacesActivity.class);
+             EPlaces place = list.get(getLayoutPosition());
+             intent.putExtra("Place",  place);
              context.startActivity(intent);
          }
 

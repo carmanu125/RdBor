@@ -17,30 +17,40 @@
             <ImageView
                 android:layout_width="100dp"
                 android:layout_height="100dp"
-                android:id="@+id/item_places_photo"
+                android:id="@+id/item_direct_photo"
                 android:layout_alignParentLeft="true"
-                android:layout_alignParentTop="true"
-                android:layout_marginRight="16dp"
-                android:src="@mipmap/logo"
+                android:layout_centerVertical="true"
+                android:src="@mipmap/logo_cicle"
                 />
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/item_places_name"
+                android:id="@+id/item_direct_name"
                 android:layout_alignParentTop="true"
-                android:layout_toRightOf="@+id/item_places_photo"
+                android:layout_toRightOf="@+id/item_direct_photo"
+                android:layout_toLeftOf="@+id/item_direct_joker"
                 android:textSize="30sp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/item_places_type"
-                android:layout_toRightOf="@+id/item_places_photo"
-                android:layout_below="@+id/item_places_name"
+                android:id="@+id/item_direct_address"
+                android:layout_toRightOf="@+id/item_direct_photo"
+                android:layout_toLeftOf="@+id/item_direct_joker"
+                android:layout_below="@+id/item_direct_name"
                 android:textColor="@android:color/black"
                 android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                />
+
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:id="@+id/item_direct_joker"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:src="@mipmap/logo_cicle"
                 />
 
         </RelativeLayout>
