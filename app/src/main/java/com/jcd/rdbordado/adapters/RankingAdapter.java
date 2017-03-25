@@ -70,7 +70,7 @@ public class RankingAdapter extends RecyclerView.Adapter<RankingAdapter.ContentH
              Intent intent= new Intent(context, ProfilePlacesActivity.class);
              EPlaces place = list.get(getLayoutPosition());
              intent.putExtra("Place",  place);
-             context.startActivity(intent);
+             context.startActivityForResult(intent, 2);
          }
 
          public void loadValuesItem(EPlaces places){

@@ -41,6 +41,8 @@ public class WebServicesRutDB {
 
 
     public static final String URL_WEB_SERVICES = "http://www.rutabordado.somee.com/api/";
+    public static final String URL_WEB = "http://www.rutabordado.somee.com/";
+    public static final String URL_WEB_IMAGE = "images/places/";
     //public static final String URL_WEB_SERVICES = "http://192.168.1.110:56394/api/";
     private final String URL_GET_PLACES = "Places/places/";
     public static final String URL_POST_DEVICES = "Devices/discountInMarker/";

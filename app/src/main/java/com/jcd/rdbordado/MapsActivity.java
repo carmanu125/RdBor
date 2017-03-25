@@ -27,6 +27,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
@@ -44,6 +45,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.jcd.rdbordado.adapters.SpinnerPlacesAdapter;
 import com.jcd.rdbordado.entity.EPlaces;
 import com.jcd.rdbordado.local.RutaDB;
+import com.jcd.rdbordado.ws.WebServicesRutDB;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -52,11 +54,13 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.R.attr.value;
 import static android.content.Context.LOCATION_SERVICE;
 import static com.google.ads.AdRequest.LOGTAG;
 
@@ -82,6 +86,10 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback, Google
 
     View view;
     List<EPlaces> listPlaces;
+    EPlaces placeCurrent;
+
+    public static final String EXTRA_CODE = "Maps";
+
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -106,6 +114,17 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback, Google
         mapFragment.getMapAsync(MapsActivity.this);
 
         bt_maps_go.setOnClickListener(this);
+
+    }
+
+    private void setPlaceRoute() {
+        try
+        {
+            placeCurrent = (EPlaces) getArguments().getSerializable(EXTRA_CODE);
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     private List<EPlaces> getListPlaces() {
@@ -144,16 +163,22 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback, Google
         //Ocultando iconos
         mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
 
-        int positionList = 0;
-        for (EPlaces places : listPlaces) {
+        setPlaceRoute();
+        if(placeCurrent != null){
+            trazarRuta();
+        }else {
 
-            String[] latlong = places.getLatLong().split(",");
-            double latitudeCurrent = Double.parseDouble(latlong[0]);
-            double longitudeCurrent = Double.parseDouble(latlong[1]);
-            String positionCurrent = String.valueOf(positionList);
+            int positionList = 0;
+            for (EPlaces places : listPlaces) {
 
-            addMArker(places.getName(), new LatLng(latitudeCurrent, longitudeCurrent), positionCurrent);
-            positionList++;
+                String[] latlong = places.getLatLong().split(",");
+                double latitudeCurrent = Double.parseDouble(latlong[0]);
+                double longitudeCurrent = Double.parseDouble(latlong[1]);
+                String positionCurrent = String.valueOf(positionList);
+
+                addMArker(places.getName(), new LatLng(latitudeCurrent, longitudeCurrent), positionCurrent);
+                positionList++;
+            }
         }
 
     }
@@ -247,9 +272,20 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback, Google
         }
         locationManager.requestLocationUpdates(provider, 3000, 5000, this);
 
-            String[] latlong = listPlaces.get(positionSpinner).getLatLong().split(",");
-            double latitudePlaces = Double.parseDouble(latlong[0]);
-            double longitudePlaces = Double.parseDouble(latlong[1]);
+            String[] latlong ;
+            double latitudePlaces ;
+            double longitudePlaces ;
+
+            if(placeCurrent != null){
+
+                latlong = placeCurrent.getLatLong().split(",");
+                latitudePlaces = Double.parseDouble(latlong[0]);
+                longitudePlaces = Double.parseDouble(latlong[1]);
+            }else{
+                latlong = listPlaces.get(positionSpinner).getLatLong().split(",");
+                latitudePlaces = Double.parseDouble(latlong[0]);
+                longitudePlaces = Double.parseDouble(latlong[1]);
+            }
 
         String urlTopass = makeURL(latitude, longitude,
                 latitudePlaces, longitudePlaces);
@@ -348,6 +384,16 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback, Google
 
     }
 
+    public static Fragment newInstance(EPlaces places) {
+        Bundle args = new Bundle();
+        args.putSerializable(EXTRA_CODE, places);
+
+        MapsActivity fragment = new MapsActivity();
+        fragment.setArguments(args);
+
+        return fragment;
+    }
+
 
     private class connectAsyncTask extends AsyncTask<Void, Void, String> {
         private ProgressDialog progressDialog;
@@ -444,13 +490,19 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback, Google
         BitmapDescriptor iconInit = BitmapDescriptorFactory.fromResource(R.mipmap.default_marker);
         BitmapDescriptor iconFinish = BitmapDescriptorFactory.fromResource(R.mipmap.finish_marker);
 
-        EPlaces places = listPlaces.get(positionSpinner);
+        EPlaces places;
+        if(placeCurrent != null){
+            places = placeCurrent;
+        }else {
+            places = listPlaces.get(positionSpinner);
+        }
         String[] latlong = places.getLatLong().split(",");
         double latitudePlaces = Double.parseDouble(latlong[0]);
         double longitudePlaces = Double.parseDouble(latlong[1]);
 
         mMap.addMarker(new MarkerOptions().position(new LatLng(latitudePlaces, longitudePlaces)).icon(iconFinish).title(places.getName()));
         mMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)).icon(iconInit).title("Mi posicion"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 15f));
         try {
             // Tranform the string into a json object
             final JSONObject json = new JSONObject(result);

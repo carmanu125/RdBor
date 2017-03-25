@@ -69,7 +69,7 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.Cont
             Intent intent = new Intent(context, ProfilePlacesActivity.class);
             EPlaces place = listPlaces.get(getLayoutPosition());
             intent.putExtra("Place", place);
-            context.startActivity(intent);
+            context.startActivityForResult(intent, 2);
         }
 
         public void loadValuesItem(EPlaces places) {

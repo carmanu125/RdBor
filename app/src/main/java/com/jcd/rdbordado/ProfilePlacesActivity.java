@@ -16,8 +16,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.jcd.rdbordado.adapters.ImageGalleryAdapter;
+import com.jcd.rdbordado.async.DownloadImageBannerTask;
 import com.jcd.rdbordado.async.DownloadImageTask;
 import com.jcd.rdbordado.entity.EPlaces;
+import com.jcd.rdbordado.ws.WebServicesRutDB;
 
 import java.util.ArrayList;
 
@@ -30,7 +32,7 @@ public class ProfilePlacesActivity extends Activity implements AdapterView.OnIte
     TextView txtName;
     TextView txtShort;
 
-    public static Gallery gallery;
+    //public static Gallery gallery;
 
     //EPlaces place;
     public static ArrayList<Bitmap> lisImage;
@@ -47,7 +49,7 @@ public class ProfilePlacesActivity extends Activity implements AdapterView.OnIte
         Log.e("Activity, " , "Profiles");
         place = (EPlaces) getIntent().getSerializableExtra("Place");
 
-        gallery = (Gallery) findViewById(R.id.gallery1);
+        //gallery = (Gallery) findViewById(R.id.gallery1);
         imProfile = (ImageView) findViewById(R.id.img_profile_place_photo);
         txtDescription = (TextView) findViewById(R.id.txt_profile_place_description);
         txtAddress = (TextView) findViewById(R.id.txt_profile_place_add_current);
@@ -62,16 +64,27 @@ public class ProfilePlacesActivity extends Activity implements AdapterView.OnIte
         txtShort.setText(place.getShort_description());
 
         //adapterGallery = new ImageGalleryAdapter(this, );
-        gallery.setOnItemSelectedListener(ProfilePlacesActivity.this);
+        //gallery.setOnItemSelectedListener(ProfilePlacesActivity.this);
         //gallery.setAdapter(adapterGallery);
-        getListImageBitmap();
+        //getListImageBitmap();
+        getBannerPlace();
+    }
+
+    private void getBannerPlace() {
+
+        DownloadImageBannerTask tasImage = new DownloadImageBannerTask(imProfile, this);
+
+        String url = WebServicesRutDB.URL_WEB + WebServicesRutDB.URL_WEB_IMAGE + place.getId() + "_banner.jpg";
+        tasImage.execute(url);
+
     }
 
     private ArrayList<Bitmap> getListImageBitmap() {
 
         lisImage = new ArrayList<>();
 
-        new DownloadImageTask(adapterGallery, gallery, imProfile, this).execute("http://bordadosdecartago.com/wp-content/uploads/2015/08/descarga.png", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSRCqfSgPrFdgPDxu4XKx1sc7DamVjFO-9Fwva9eZi7xspg356Z8BkigMg", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSNvCSNziQNvbn6KxJ33afBILIQq_xqleE5_TbbLfSWYkir1wvk", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSFShIyhcBwy9dl2Juslotxrzz2sivNZu58J_MnGBMe-a3_E3bUtw");
+
+        //new DownloadImageTask(adapterGallery, gallery, imProfile, this).execute("http://bordadosdecartago.com/wp-content/uploads/2015/08/descarga.png", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSRCqfSgPrFdgPDxu4XKx1sc7DamVjFO-9Fwva9eZi7xspg356Z8BkigMg", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSNvCSNziQNvbn6KxJ33afBILIQq_xqleE5_TbbLfSWYkir1wvk", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSFShIyhcBwy9dl2Juslotxrzz2sivNZu58J_MnGBMe-a3_E3bUtw");
 
         return lisImage;
     }
@@ -116,5 +129,12 @@ public class ProfilePlacesActivity extends Activity implements AdapterView.OnIte
             return;
         }
         startActivity(intent);
+    }
+
+    public void goToMap(View view) {
+        Intent intent = new Intent();
+        intent.putExtra("Maps", place);
+        setResult(RESULT_OK, intent);
+        finish();
     }
 }

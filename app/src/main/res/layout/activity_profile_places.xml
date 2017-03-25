@@ -20,17 +20,14 @@
             android:layout_weight="4"
             android:id="@+id/img_profile_place_photo"
             android:layout_gravity="center_horizontal"
-            android:paddingTop="15dp"
-            android:paddingBottom="5dp"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
             android:src="@mipmap/logo_blanco"/>
 
-        <Gallery
+        <!--<Gallery
             android:id="@+id/gallery1"
             android:layout_width="fill_parent"
             android:layout_height="0dp"
             android:layout_weight="1"/>
+            -->
 
 
     </LinearLayout>
@@ -89,7 +86,7 @@
             android:text="Ir"
             android:textColor="@color/colorPrimary"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
-            />
+            android:onClick="goToMap"/>
     </LinearLayout>
 
 

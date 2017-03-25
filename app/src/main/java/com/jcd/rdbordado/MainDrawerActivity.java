@@ -1,6 +1,7 @@
 package com.jcd.rdbordado;
 
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -21,6 +22,7 @@ import android.view.MenuItem;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
+import com.jcd.rdbordado.entity.EPlaces;
 import com.jcd.rdbordado.ws.WebServicesRutDB;
 
 public class MainDrawerActivity extends AppCompatActivity
@@ -144,7 +146,20 @@ public class MainDrawerActivity extends AppCompatActivity
             Fragment newFrame = DiscountActivity.newInstance(scanResult.getContents());
 
             fm.beginTransaction().replace(R.id.flContent, newFrame).commit();
+        }else{
+            if (requestCode == 2) {
+                if(resultCode == RESULT_OK){
+
+                    FragmentManager fm = getSupportFragmentManager();
+
+                    Fragment newFrame = MapsActivity.newInstance((EPlaces) data.getSerializableExtra(MapsActivity.EXTRA_CODE));
+
+                    fm.beginTransaction().replace(R.id.flContent, newFrame).commit();
+                }
+            }
         }
+
+
 
     }
 }

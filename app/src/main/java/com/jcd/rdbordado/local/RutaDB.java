@@ -119,7 +119,7 @@ public class RutaDB {
     public List<EPlaces> listPlacesTop10(){
         List<EPlaces> lisPlaces = new ArrayList<>();
 
-        Cursor c = nDb.rawQuery("select * from " + T_PLACES + " order by " + KEY_PLA_RANKING + " limit 10", null);
+        Cursor c = nDb.rawQuery("select * from " + T_PLACES + " order by " + KEY_PLA_RANKING + " desc limit 10", null);
         for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()){
             EPlaces place = new EPlaces();
 

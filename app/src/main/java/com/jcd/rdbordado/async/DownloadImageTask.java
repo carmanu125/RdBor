@@ -63,6 +63,6 @@ public class DownloadImageTask extends AsyncTask<String, Void, ArrayList<Bitmap>
         ProfilePlacesActivity.lisImage = bitmap;
         img.setImageBitmap(bitmap.get(0));
         ProfilePlacesActivity.adapterGallery = new ImageGalleryAdapter(context, ProfilePlacesActivity.lisImage);
-        ProfilePlacesActivity.gallery.setAdapter(ProfilePlacesActivity.adapterGallery);
+        //ProfilePlacesActivity.gallery.setAdapter(ProfilePlacesActivity.adapterGallery);
     }
 }
