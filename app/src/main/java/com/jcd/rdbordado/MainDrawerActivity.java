@@ -109,7 +109,7 @@ public class MainDrawerActivity extends AppCompatActivity
             fragment = new RankingActivity();
 
         } else if (id == R.id.nav_compras) {
-            fragment = new DiscountActivity();
+            fragment = new SellActivity();
 
         } else if (id == R.id.nav_directorio) {
             fragment = new DirectoryActivity();
@@ -137,29 +137,16 @@ public class MainDrawerActivity extends AppCompatActivity
         super.onActivityResult(requestCode, resultCode, data);
         System.out.println("the code is catch");
 
-        IntentResult scanResult = IntentIntegrator.parseActivityResult(
-                requestCode, resultCode, data);
-// handle scan result
-        if (scanResult != null) {
-            FragmentManager fm = getSupportFragmentManager();
 
-            Fragment newFrame = DiscountActivity.newInstance(scanResult.getContents());
+        if (requestCode == 2) {
+            if (resultCode == RESULT_OK) {
 
-            fm.beginTransaction().replace(R.id.flContent, newFrame).commit();
-        }else{
-            if (requestCode == 2) {
-                if(resultCode == RESULT_OK){
+                FragmentManager fm = getSupportFragmentManager();
 
-                    FragmentManager fm = getSupportFragmentManager();
+                Fragment newFrame = MapsActivity.newInstance((EPlaces) data.getSerializableExtra(MapsActivity.EXTRA_CODE));
 
-                    Fragment newFrame = MapsActivity.newInstance((EPlaces) data.getSerializableExtra(MapsActivity.EXTRA_CODE));
-
-                    fm.beginTransaction().replace(R.id.flContent, newFrame).commit();
-                }
+                fm.beginTransaction().replace(R.id.flContent, newFrame).commit();
             }
         }
-
-
-
     }
 }

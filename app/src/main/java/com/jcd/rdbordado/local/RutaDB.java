@@ -96,7 +96,7 @@ public class RutaDB {
     public List<EPlaces> listPlaces (){
         List<EPlaces> lisPlaces = new ArrayList<>();
 
-        Cursor c = nDb.rawQuery("select * from " + T_PLACES, null);
+        Cursor c = nDb.rawQuery("select * from " + T_PLACES + " order by " + KEY_PLA_NAME + " desc", null);
         for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()){
             EPlaces place = new EPlaces();
 

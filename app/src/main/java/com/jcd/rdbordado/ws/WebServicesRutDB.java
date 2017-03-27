@@ -83,7 +83,7 @@ public class WebServicesRutDB {
         @Override
         protected void onPreExecute() {
 
-            progressDialog =ProgressDialog.show(context, "Titulo", "Mensaje", true, false);
+            progressDialog =ProgressDialog.show(context, "Por favor espere", "Conectando con el servidor", true, false);
         }
 
         protected List<EPlaces> doInBackground(String... params) {

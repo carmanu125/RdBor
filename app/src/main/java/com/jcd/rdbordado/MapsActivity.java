@@ -1,6 +1,7 @@
 package com.jcd.rdbordado;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -26,6 +27,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -193,6 +195,25 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback, Google
     @Override
     public boolean onMarkerClick(Marker marker) {
 
+        final Marker newMarker = marker;
+        ImageView im = new ImageView(getContext());
+        im.setImageResource(R.mipmap.logo_cicle);
+
+        AlertDialog.Builder db = new AlertDialog.Builder(getContext());
+        db.setView(im);
+        db.setTitle(marker.getTitle());
+        db.setPositiveButton("Ver perfil", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                callNewActivity(newMarker);
+            }
+        });
+        AlertDialog dialog = db.show();
+
+
+        return false;
+    }
+
+    private void callNewActivity(Marker marker){
         try {
             //if (marker.getTag().equals("Frixio")) {
             Intent intent = new Intent(getActivity(), ProfilePlacesActivity.class);
@@ -204,7 +225,6 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback, Google
         } catch (Exception e) {
 
         }
-        return false;
     }
 
 

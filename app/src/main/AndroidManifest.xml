@@ -22,7 +22,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <uses-sdk xmlns:tools="http://schemas.android.com/tools"
-            tools:overrideLibrary="com.google.android.gms.play_services"></uses-sdk>
+            tools:overrideLibrary="com.google.android.gms.play_services" />
 
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
@@ -50,7 +50,12 @@
             android:name=".MainDrawerActivity"
             android:label="@string/title_activity_main_drawer"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".DirectoryActivity"></activity>
+        <activity android:name=".DirectoryActivity" />
+        <activity android:name=".SellActivity" />
+        <activity
+            android:name=".ViewPagerActivity"
+            android:label="@string/title_activity_view_pager"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
