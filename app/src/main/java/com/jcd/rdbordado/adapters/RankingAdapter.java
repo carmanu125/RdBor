@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 import com.jcd.rdbordado.ProfilePlacesActivity;
 import com.jcd.rdbordado.R;
 import com.jcd.rdbordado.entity.EPlaces;
+import com.squareup.picasso.Picasso;
 
 import java.io.Serializable;
 import java.util.List;
@@ -73,10 +75,19 @@ public class RankingAdapter extends RecyclerView.Adapter<RankingAdapter.ContentH
              context.startActivityForResult(intent, 2);
          }
 
-         public void loadValuesItem(EPlaces places){
+         public void loadValuesItem(EPlaces places) {
              txtName.setText(places.getName());
              txtType.setText(places.getShort_description());
-             //txtName.setText(places.);
+             try {
+                 Picasso.with(context)
+                         .load(places.getUrlImage())
+                         //.placeholder(R.mipmap.logo_azul)
+                         .error(R.mipmap.logo_cicle)
+                         .into(imgPhoto);
+             } catch (Exception e) {
+                 Log.e("Error Picasso: ", e.toString());
+             }
+
          }
 
 

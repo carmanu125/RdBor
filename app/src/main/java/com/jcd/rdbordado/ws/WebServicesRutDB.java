@@ -145,6 +145,7 @@ public class WebServicesRutDB {
                     places.setEmail(obj.getString("email"));
                     places.setLatLong(obj.getString("latLong"));
                     places.setRanking(obj.getString("Ranking"));
+                    places.setUrlImage(obj.getString("Url_image"));
 
                     listPlaces.add(places);
                 }

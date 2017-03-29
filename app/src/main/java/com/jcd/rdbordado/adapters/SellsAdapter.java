@@ -3,6 +3,7 @@ package com.jcd.rdbordado.adapters;
 import android.app.Activity;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import com.jcd.rdbordado.ProfilePlacesActivity;
 import com.jcd.rdbordado.R;
 import com.jcd.rdbordado.async.DownloadImageTask;
 import com.jcd.rdbordado.entity.EPlaces;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -77,7 +79,15 @@ public class SellsAdapter extends RecyclerView.Adapter<SellsAdapter.SellsHolder>
         public void loadValuesItem(EPlaces places) {
             txtName.setText(places.getName());
             txtType.setText(places.getShort_description());
-            //txtName.setText(places.);
+            try {
+                Picasso.with(context)
+                        .load(places.getUrlImage())
+                        //.placeholder(R.mipmap.logo_azul)
+                        .error(R.mipmap.logo_cicle)
+                        .into(imgPhoto);
+            } catch (Exception e) {
+                Log.e("Error Picasso: ", e.toString());
+            }
         }
     }
 

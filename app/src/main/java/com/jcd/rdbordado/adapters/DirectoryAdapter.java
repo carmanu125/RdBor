@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 import com.jcd.rdbordado.ProfilePlacesActivity;
 import com.jcd.rdbordado.R;
 import com.jcd.rdbordado.entity.EPlaces;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -59,7 +61,7 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.Cont
 
             txtName = (TextView) itemView.findViewById(R.id.item_direct_name);
             txtAddress = (TextView) itemView.findViewById(R.id.item_direct_address);
-            imgPhoto = (ImageView) itemView.findViewById(R.id.item_places_photo);
+            imgPhoto = (ImageView) itemView.findViewById(R.id.item_direct_photo);
 
             itemView.setOnClickListener(this);
         }
@@ -75,7 +77,15 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.Cont
         public void loadValuesItem(EPlaces places) {
             txtName.setText(places.getName());
             txtAddress.setText(places.getAddress());
-            //txtName.setText(places.);
+            try {
+                Picasso.with(context.getBaseContext())
+                        .load(places.getUrlImage())
+                        //.placeholder(R.mipmap.logo_azul)
+                        .error(R.mipmap.logo_cicle)
+                        .into(imgPhoto);
+            }catch (Exception e){
+                Log.e("Error Picasso: " , e.toString());
+            }
         }
     }
 }

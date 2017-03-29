@@ -17,7 +17,16 @@ public class EPlaces implements Serializable{
     private String email ;
     private String latLong ;
     private String Ranking ;
+    private String urlImage;
 
+
+    public String getUrlImage() {
+        return urlImage;
+    }
+
+    public void setUrlImage(String urlImage) {
+        this.urlImage = urlImage;
+    }
 
     public int getId() {
         return id;
