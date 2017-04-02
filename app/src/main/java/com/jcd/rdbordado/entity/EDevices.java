@@ -6,7 +6,7 @@ package com.jcd.rdbordado.entity;
 
 public class EDevices {
 
-    private int id;
+    private int id_Device;
     private String imei;
     private String brand;
     private String device;
@@ -16,8 +16,13 @@ public class EDevices {
     private String user;
     private String versionSdk;
 
-    public void setId(int id) {
-        this.id = id;
+
+    public int getId_Device() {
+        return id_Device;
+    }
+
+    public void setId_Device(int id_Device) {
+        this.id_Device = id_Device;
     }
 
     public String getImei() {

@@ -49,7 +49,6 @@
             android:id="@+id/txt_discount_value"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="30 % de Descuento \n en nuestra tienda "
             android:gravity="center"
             android:layout_margin="5dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"

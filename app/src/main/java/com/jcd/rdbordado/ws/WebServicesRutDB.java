@@ -4,12 +4,15 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 
 import com.google.gson.Gson;
 import com.jcd.rdbordado.DiscountActivity;
 import com.jcd.rdbordado.MainDrawerActivity;
+import com.jcd.rdbordado.async.DownloadImageTask;
 import com.jcd.rdbordado.entity.EPlaces;
+import com.jcd.rdbordado.entity.EPlacesImage;
 import com.jcd.rdbordado.local.RutaDB;
 
 import org.json.JSONArray;
@@ -45,6 +48,7 @@ public class WebServicesRutDB {
     public static final String URL_WEB_IMAGE = "images/places/";
     //public static final String URL_WEB_SERVICES = "http://192.168.1.110:56394/api/";
     private final String URL_GET_PLACES = "Places/places/";
+    public static final String URL_GET_PLACES_IMAGES = "Places/ImagesPlaces/";
     public static final String URL_POST_DEVICES = "Devices/discountInMarker/";
 
 
@@ -62,9 +66,14 @@ public class WebServicesRutDB {
         listar.execute();
     }
 
-    public void posDevices(){
-        TareaWSPostDevices listar = new TareaWSPostDevices(context);
-        listar.execute();
+    public void getPlacesImage(String idPlace){
+        TareaWSListarImages listar = new TareaWSListarImages(context);
+        listar.execute(idPlace);
+    }
+
+    public void posDevices(String idPlace){
+        TareaWSPostDevices sendDevices = new TareaWSPostDevices(context);
+        sendDevices.execute(idPlace);
     }
 
     //Tarea Asíncrona para llamar al WS de listado en segundo plano
@@ -210,7 +219,7 @@ public class WebServicesRutDB {
 
                 HttpURLConnection urlConnection = null;
 
-                URL url = new URL(URL_WEB_SERVICES + URL_POST_DEVICES);
+                URL url = new URL(URL_WEB_SERVICES + URL_POST_DEVICES + params[0]);
 
                 Log.e("URL WS: ", url.toString());
 
@@ -224,11 +233,13 @@ public class WebServicesRutDB {
                 urlConnection.setDoOutput(true);
                 urlConnection.setDoInput(true);
 
+                TelephonyManager telephonyManager = (TelephonyManager)context.getSystemService(Context.TELEPHONY_SERVICE);
+
                 JSONObject cliente   = new JSONObject();
                 //cliente.put("brand", Build.BRAND);
                 //cliente.put("device", Build.DEVICE);
                 //cliente.put("hardware", Build.HARDWARE);
-                cliente.put("imei", Build.ID);
+                cliente.put("imei", telephonyManager.getDeviceId());
                 cliente.put("model", Build.MODEL);
                 cliente.put("serial", Build.SERIAL);
                 cliente.put("user", Build.USER);
@@ -274,16 +285,126 @@ public class WebServicesRutDB {
             if(valueResponse.equals("True")){
                 //Correcto
                 DiscountActivity.txtQrCode.setText("Descuento Aceptado!");
-            } else if(valueResponse.equals("Error")){
+            } else{
                 //Ya Existe
                 DiscountActivity.txtQrCode.setText("No es posible, su descuento ya ha sido usado!");
-            }else{
-                //No se encontro respuesta de insercion
-                DiscountActivity.txtQrCode.setText("No hubo conexion con el servidor");
-            }
 
+            }
             progressDialog.dismiss();
         }
     }
+
+
+    private class TareaWSListarImages extends AsyncTask<String,Integer, String[]>{
+
+        ProgressDialog progressDialog;
+        private List<EPlacesImage> listPlacesImage = new ArrayList<>();
+        Context context;
+        RutaDB nDB ;
+
+        public TareaWSListarImages(Context context) {
+            this.context = context;
+            nDB = new RutaDB(context);
+        }
+
+        @Override
+        protected void onPreExecute() {
+
+            progressDialog =ProgressDialog.show(context, "Por favor espere", "Conectando con el servidor", true, false);
+        }
+
+        protected String[] doInBackground(String... params) {
+            String[]listaImages = new String[]{} ;
+
+            try {
+                HttpURLConnection urlConnection = null;
+
+                URL url = new URL(URL_WEB_SERVICES + URL_GET_PLACES_IMAGES + params[0]);
+
+                Log.e("URL WS: ", url.toString());
+
+                urlConnection = (HttpURLConnection) url.openConnection();
+
+
+                urlConnection.setRequestMethod("GET");
+
+                urlConnection.setReadTimeout(10000 /* milliseconds */);
+                urlConnection.setConnectTimeout(15000 /* milliseconds */);
+
+                urlConnection.setDoOutput(true);
+
+                urlConnection.connect();
+
+                BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream()));
+
+                //char[] buffer = new char[1024];
+
+                String jsonString = new String();
+
+                StringBuilder sb = new StringBuilder();
+                String line;
+                while ((line = br.readLine()) != null) {
+                    sb.append(line + "\n");
+                }
+                br.close();
+
+                jsonString = sb.toString();
+
+                Log.e("JSON: " , jsonString);
+
+                //Gson gson = new Gson();
+                //Places frutas = gson.fromJson(jsonString, EPlaces.class);
+
+
+                JSONArray respJSON = new JSONArray(jsonString);
+
+                //List<EPlaces> listPlaces = new ArrayList<>();
+                listaImages = new String[respJSON.length()];
+                for(int i=0; i<respJSON.length(); i++)
+                {
+                    JSONObject obj = respJSON.getJSONObject(i);
+                    EPlacesImage placesImage = new EPlacesImage();
+
+                    placesImage.setId(obj.getInt("id"));
+                    placesImage.setUrl(obj.getString("url"));
+                    placesImage.setIdPlace(obj.getInt("id_Place"));
+
+                    //listPlacesImage.add(placesImage);
+                    listaImages[i] = placesImage.getUrl();
+                }
+
+
+
+            } catch (ProtocolException e) {
+                e.printStackTrace();
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return listaImages;
+        }
+
+        private void saveLocal(List<EPlaces> listPlaces) {
+            try {
+                nDB.openDB();
+                nDB.deletePlaces();
+                nDB.insertPlaces(listPlaces);
+                nDB.closeDB();
+            } catch (Exception e) {
+                Log.e("Error BD: ", e.getMessage());
+            }
+        }
+
+        protected void onPostExecute(String[] result) {
+
+            progressDialog.dismiss();
+            //activity.navigationView.getMenu().getItem(0).setChecked(true);
+            new DownloadImageTask(context).execute(result);
+        }
+    }
+
 
 }

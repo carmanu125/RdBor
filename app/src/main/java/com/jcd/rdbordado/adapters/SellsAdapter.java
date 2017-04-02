@@ -14,6 +14,7 @@ import com.jcd.rdbordado.ProfilePlacesActivity;
 import com.jcd.rdbordado.R;
 import com.jcd.rdbordado.async.DownloadImageTask;
 import com.jcd.rdbordado.entity.EPlaces;
+import com.jcd.rdbordado.ws.WebServicesRutDB;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -62,8 +63,9 @@ public class SellsAdapter extends RecyclerView.Adapter<SellsAdapter.SellsHolder>
         @Override
         public void onClick(View v) {
 
+            WebServicesRutDB webServicesRutDB = new WebServicesRutDB(context);
+            webServicesRutDB.getPlacesImage(String.valueOf(list.get(getLayoutPosition()).getId()));
 
-            new DownloadImageTask(context).execute("http://bordadosdecartago.com/wp-content/uploads/2015/08/descarga.png", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSRCqfSgPrFdgPDxu4XKx1sc7DamVjFO-9Fwva9eZi7xspg356Z8BkigMg", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSNvCSNziQNvbn6KxJ33afBILIQq_xqleE5_TbbLfSWYkir1wvk", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSFShIyhcBwy9dl2Juslotxrzz2sivNZu58J_MnGBMe-a3_E3bUtw");
         }
 
         public SellsHolder(View itemView) {

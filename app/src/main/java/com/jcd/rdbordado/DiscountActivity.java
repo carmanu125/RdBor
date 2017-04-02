@@ -44,17 +44,17 @@ public class DiscountActivity extends Activity implements View.OnClickListener {
         try
         {
             //String value = getIntent().getStringExtra(EXTRA_CODE);
-            String url = WebServicesRutDB.URL_WEB_SERVICES + WebServicesRutDB.URL_POST_DEVICES;
-            if(value.equals(url)){
+            //String url = WebServicesRutDB.URL_WEB_SERVICES + WebServicesRutDB.URL_POST_DEVICES;
+            String[] idPlace = value.split(";");
+            if(idPlace[0].equals("Place")){
 
                 WebServicesRutDB ws = new WebServicesRutDB(this);
-                ws.posDevices();
+                ws.posDevices(idPlace[1]);
                 value = "Por favor espere...";
             }else{
                 Toast.makeText(this, "El codigo Qr no es el indicado", Toast.LENGTH_SHORT).show();
                 value = "Intente de nuevo";
             }
-
 
             return value;
         }catch (Exception e){
