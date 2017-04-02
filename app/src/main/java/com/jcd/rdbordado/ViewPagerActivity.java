@@ -11,6 +11,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -147,11 +148,15 @@ public class ViewPagerActivity extends AppCompatActivity implements ViewPager.On
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_view_pager, container, false);
-            ImageView imageView = (ImageView) rootView.findViewById(R.id.section_image);
-            int[] color = new int[]{android.R.color.black, android.R.color.white,android.R.color.darker_gray};
-            int position = getArguments().getInt(ARG_SECTION_NUMBER);
-            imageView.setImageBitmap(Globales.listSells.get(position));
-            //textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
+            try {
+                ImageView imageView = (ImageView) rootView.findViewById(R.id.section_image);
+                int[] color = new int[]{android.R.color.black, android.R.color.white, android.R.color.darker_gray};
+                int position = getArguments().getInt(ARG_SECTION_NUMBER);
+                imageView.setImageBitmap(Globales.listSells.get(position));
+                //textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
+            }catch (Exception e){
+                Log.e("No Hay imagenes: ", e.toString());
+            }
             return rootView;
         }
     }
@@ -176,21 +181,12 @@ public class ViewPagerActivity extends AppCompatActivity implements ViewPager.On
         @Override
         public int getCount() {
             // Show 4 total pages.
-            return 4;
+            return Globales.listSells.size();
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
-            switch (position) {
-                case 0:
-                    return "SECTION 1";
-                case 1:
-                    return "SECTION 2";
-                case 2:
-                    return "SECTION 3";
-                case 3:
-                    return "SECTION 4";
-            }
+
             return null;
         }
     }

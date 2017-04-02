@@ -1,11 +1,13 @@
 package com.jcd.rdbordado.ws;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.jcd.rdbordado.DiscountActivity;
@@ -50,6 +52,7 @@ public class WebServicesRutDB {
     private final String URL_GET_PLACES = "Places/places/";
     public static final String URL_GET_PLACES_IMAGES = "Places/ImagesPlaces/";
     public static final String URL_POST_DEVICES = "Devices/discountInMarker/";
+    public static final String URL_POST_RATING = "Ranking/RankingPlace/";
 
 
     public WebServicesRutDB(Context context, MainDrawerActivity activity) {
@@ -74,6 +77,11 @@ public class WebServicesRutDB {
     public void posDevices(String idPlace){
         TareaWSPostDevices sendDevices = new TareaWSPostDevices(context);
         sendDevices.execute(idPlace);
+    }
+
+    public void posRating(String idPlace, String value, Activity activity){
+        TareaWSPostRating sendRating = new TareaWSPostRating(context, activity);
+        sendRating.execute(idPlace, value);
     }
 
     //Tarea Asíncrona para llamar al WS de listado en segundo plano
@@ -208,7 +216,7 @@ public class WebServicesRutDB {
         @Override
         protected void onPreExecute() {
 
-            progressDialog =ProgressDialog.show(context, "Titulo", "Mensaje", true, false);
+            progressDialog =ProgressDialog.show(context, "Enviando", "Por favor Espere", true, false);
         }
 
         @Override
@@ -293,7 +301,6 @@ public class WebServicesRutDB {
             progressDialog.dismiss();
         }
     }
-
 
     private class TareaWSListarImages extends AsyncTask<String,Integer, String[]>{
 
@@ -403,6 +410,105 @@ public class WebServicesRutDB {
             progressDialog.dismiss();
             //activity.navigationView.getMenu().getItem(0).setChecked(true);
             new DownloadImageTask(context).execute(result);
+        }
+    }
+
+
+    private class TareaWSPostRating extends AsyncTask<String, Void, String> {
+
+        ProgressDialog progressDialog;
+        Context context;
+        Activity activity;
+
+        public TareaWSPostRating(Context context, Activity activity) {
+            this.context = context;
+            this.activity = activity;
+        }
+
+        @Override
+        protected void onPreExecute() {
+
+            progressDialog =ProgressDialog.show(context, "Enviando", "Por favor espere", true, false);
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            String jsonString = "";
+
+            try {
+
+                HttpURLConnection urlConnection = null;
+
+                URL url = new URL(URL_WEB_SERVICES + URL_POST_RATING );
+
+                Log.e("URL WS: ", url.toString());
+
+                urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestProperty("Content-Type", "application/json");
+                urlConnection.setRequestProperty("Accept", "application/json");
+                urlConnection.setRequestMethod("POST");
+
+                urlConnection.setReadTimeout(10000 /* milliseconds */);
+                urlConnection.setConnectTimeout(15000 /* milliseconds */);
+                urlConnection.setDoOutput(true);
+                urlConnection.setDoInput(true);
+
+                TelephonyManager telephonyManager = (TelephonyManager)context.getSystemService(Context.TELEPHONY_SERVICE);
+
+                JSONObject cliente   = new JSONObject();
+
+                cliente.put("Id_Place", params[0]);
+                cliente.put("Id_Imei", telephonyManager.getDeviceId());
+                cliente.put("value", params[1]);
+
+
+                OutputStreamWriter wr = new OutputStreamWriter(urlConnection.getOutputStream());
+                wr.write(cliente.toString());
+                wr.flush();
+
+
+                StringBuilder sb = new StringBuilder();
+                int HttpResult = urlConnection.getResponseCode();
+                if (HttpResult == HttpURLConnection.HTTP_OK) {
+                    BufferedReader br = new BufferedReader(
+                            new InputStreamReader(urlConnection.getInputStream(), "utf-8"));
+                    String line = null;
+                    while ((line = br.readLine()) != null) {
+                        sb.append(line.replace("\"", ""));
+                    }
+                    br.close();
+                    System.out.println("" + sb.toString());
+                    jsonString = sb.toString();
+                } else {
+                    System.out.println(urlConnection.getResponseMessage());
+                    jsonString = urlConnection.getResponseMessage();
+                }
+
+            }
+            catch(Exception ex)
+            {
+                Log.e("ServicioRest","Error!", ex);
+            }
+
+            return jsonString;
+
+        }
+
+        @Override
+        protected void onPostExecute(String valueResponse) {
+
+            String result = "";
+            if(valueResponse.equals("True")){
+                //Correcto
+                result ="Calificacion Aceptada!";
+            } else{
+                //NO se completo
+                result = "No es posible, no se conecto con el servidor";
+
+            }
+            progressDialog.dismiss();
+            Toast.makeText(context, result, Toast.LENGTH_SHORT).show();
+            activity.finish();
         }
     }
 

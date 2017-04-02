@@ -21,8 +21,9 @@ import com.jcd.rdbordado.ws.WebServicesRutDB;
 
 public class DiscountActivity extends Activity implements View.OnClickListener {
 
-    Button btSacn;
+    Button btSacn, btCali;
     public static TextView txtQrCode;
+    String idPlace_Current = "";
 
     private static final String EXTRA_CODE = "QrCode";
 
@@ -32,6 +33,7 @@ public class DiscountActivity extends Activity implements View.OnClickListener {
         setContentView(R.layout.activity_discount);
 
         btSacn = (Button) findViewById(R.id.bt_discount_scan);
+        btCali = (Button) findViewById(R.id.bt_dicount_cali);
         txtQrCode = (TextView) findViewById(R.id.txt_discount_value);
 
         //txtQrCode.setText(getValueQR());
@@ -46,11 +48,13 @@ public class DiscountActivity extends Activity implements View.OnClickListener {
             //String value = getIntent().getStringExtra(EXTRA_CODE);
             //String url = WebServicesRutDB.URL_WEB_SERVICES + WebServicesRutDB.URL_POST_DEVICES;
             String[] idPlace = value.split(";");
+            idPlace_Current = idPlace[1];
             if(idPlace[0].equals("Place")){
 
                 WebServicesRutDB ws = new WebServicesRutDB(this);
-                ws.posDevices(idPlace[1]);
+                ws.posDevices(idPlace_Current);
                 value = "Por favor espere...";
+                btCali.setVisibility(View.VISIBLE);
             }else{
                 Toast.makeText(this, "El codigo Qr no es el indicado", Toast.LENGTH_SHORT).show();
                 value = "Intente de nuevo";
@@ -84,5 +88,11 @@ public class DiscountActivity extends Activity implements View.OnClickListener {
         if (scanResult != null) {
             getValueQR(scanResult.getContents());
         }
+    }
+
+    public void ratingPlace(View view) {
+        Intent act = new Intent(this, CalificacionActivity.class);
+        act.putExtra("IdPlace", idPlace_Current);
+        startActivity(act);
     }
 }
