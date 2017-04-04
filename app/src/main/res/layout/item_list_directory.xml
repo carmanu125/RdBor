@@ -22,6 +22,7 @@
                 android:src="@mipmap/logo_cicle"
                 />
             <LinearLayout
+                android:layout_margin="5dp"
                 android:gravity="center"
                 android:layout_toRightOf="@+id/item_direct_photo"
                 android:layout_toLeftOf="@+id/item_direct_joker"

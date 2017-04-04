@@ -24,6 +24,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -45,6 +46,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.jcd.rdbordado.adapters.SpinnerPlacesAdapter;
+import com.jcd.rdbordado.async.DownloadImageBannerTask;
 import com.jcd.rdbordado.entity.EPlaces;
 import com.jcd.rdbordado.local.RutaDB;
 import com.jcd.rdbordado.ws.WebServicesRutDB;
@@ -178,39 +180,55 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback, Google
                 double longitudeCurrent = Double.parseDouble(latlong[1]);
                 String positionCurrent = String.valueOf(positionList);
 
-                addMArker(places.getName(), new LatLng(latitudeCurrent, longitudeCurrent), positionCurrent);
+                addMArker(places.getName(), new LatLng(latitudeCurrent, longitudeCurrent), positionCurrent, places.getShort_description());
                 positionList++;
             }
         }
 
     }
 
-    private void addMArker(String tittle, LatLng latLong, String tag) {
+    private void addMArker(String tittle, LatLng latLong, String tag, String shortDescription) {
         // Add a marker in Sydney and move the camera
 
-        mMap.addMarker(new MarkerOptions().position(latLong).title(tittle).snippet("Esta es una corta descripcion")).setTag(tag);
+        BitmapDescriptor iconInit = BitmapDescriptorFactory.fromResource(R.mipmap.default_marker);
+        mMap.addMarker(new MarkerOptions().position(latLong).title(tittle).snippet(shortDescription).icon(iconInit)).setTag(tag);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLong, 15f));
     }
 
     @Override
     public boolean onMarkerClick(Marker marker) {
+        try {
 
-        final Marker newMarker = marker;
-        ImageView im = new ImageView(getContext());
-        im.setImageResource(R.mipmap.logo_cicle);
+            final Marker newMarker = marker;
+            ImageView im = new ImageView(getContext());
+            ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(150, 150);
+            im.setLayoutParams(params);
+            getImagePlace(listPlaces.get(Integer.parseInt(marker.getTag().toString())).getUrlImage(), im);
+            //im.setImageResource(R.mipmap.logo_cicle);
 
-        AlertDialog.Builder db = new AlertDialog.Builder(getContext());
-        db.setView(im);
-        db.setTitle(marker.getTitle());
-        db.setPositiveButton("Ver perfil", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                callNewActivity(newMarker);
-            }
-        });
-        AlertDialog dialog = db.show();
+            AlertDialog.Builder db = new AlertDialog.Builder(getContext());
+            db.setView(im);
+            db.setTitle(marker.getTitle());
+            db.setPositiveButton("Ver perfil", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    callNewActivity(newMarker);
+                }
+            });
+            AlertDialog dialog = db.show();
 
-
+        }catch (Exception e){
+            Log.e("No onClick:: ", e.toString());
+        }
         return false;
+    }
+
+    private void getImagePlace(String urlLogo, ImageView imProfile) {
+
+        DownloadImageBannerTask tasImage = new DownloadImageBannerTask(imProfile, getContext());
+        //WebServicesRutDB.URL_WEB + WebServicesRutDB.URL_WEB_IMAGE + place.getId() + "_banner.jpg"
+        String url = urlLogo;
+        tasImage.execute(url);
+
     }
 
     private void callNewActivity(Marker marker){
@@ -520,7 +538,7 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback, Google
         double latitudePlaces = Double.parseDouble(latlong[0]);
         double longitudePlaces = Double.parseDouble(latlong[1]);
 
-        mMap.addMarker(new MarkerOptions().position(new LatLng(latitudePlaces, longitudePlaces)).icon(iconFinish).title(places.getName()));
+        mMap.addMarker(new MarkerOptions().position(new LatLng(latitudePlaces, longitudePlaces)).icon(iconFinish).title(places.getName())).setTag(String.valueOf(positionSpinner));
         mMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)).icon(iconInit).title("Mi posicion"));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 15f));
         try {
