@@ -18,7 +18,7 @@ import java.util.List;
 public class RutaDB {
 
     public static String BD_NAME = "RutaDB";
-    public static int BD_VERSION = 1;
+    public static int BD_VERSION = 2;
 
     public static String T_PLACES = "Places";
 
@@ -32,6 +32,7 @@ public class RutaDB {
     public static String KEY_PLA_LATLONG = "latLong";
     public static String KEY_PLA_RANKING = "Ranking";
     public static String KEY_PLA_URL_IMAGE = "Url_image";
+    public static String KEY_PLA_URL_LOGO = "Url_Logo";
 
 
     private SQLiteDatabase nDb;
@@ -49,7 +50,7 @@ public class RutaDB {
         public void onCreate(SQLiteDatabase db) {
             db.execSQL("CREATE TABLE " + T_PLACES + "(" + KEY_PLA_ID + " INTEGER PRIMARY KEY, " + KEY_PLA_NAME + " TEXT, " + KEY_PLA_SHORT_DESC + " TEXT, " +
                     KEY_PLA_DESC + " VARCHAR(250), " + KEY_PLA_ADDRESS + " VARCHAR(200), " + KEY_PLA_PHONE + " TEXT, " + KEY_PLA_EMAIL + " VARCHAR(200), " +
-                    KEY_PLA_LATLONG + " TEXT, " + KEY_PLA_RANKING + " FLOAT, " + KEY_PLA_URL_IMAGE + " TEXT);");
+                    KEY_PLA_LATLONG + " TEXT, " + KEY_PLA_RANKING + " FLOAT, " + KEY_PLA_URL_IMAGE + " TEXT, " + KEY_PLA_URL_LOGO + " TEXT);");
         }
 
         @Override
@@ -89,6 +90,7 @@ public class RutaDB {
             cv.put(KEY_PLA_LATLONG, places.getLatLong());
             cv.put(KEY_PLA_RANKING, places.getRanking());
             cv.put(KEY_PLA_URL_IMAGE, places.getUrlImage());
+            cv.put(KEY_PLA_URL_LOGO, places.getUrlLogo());
 
 
             nDb.insert(T_PLACES,null,cv);
@@ -112,6 +114,7 @@ public class RutaDB {
             place.setLatLong(c.getString(7));
             place.setRanking(c.getString(8));
             place.setUrlImage(c.getString(9));
+            place.setUrlLogo(c.getString(10));
 
 
             lisPlaces.add(place);
@@ -137,6 +140,7 @@ public class RutaDB {
             place.setLatLong(c.getString(7));
             place.setRanking(c.getString(8));
             place.setUrlImage(c.getString(9));
+            place.setUrlLogo(c.getString(10));
 
             lisPlaces.add(place);
         }

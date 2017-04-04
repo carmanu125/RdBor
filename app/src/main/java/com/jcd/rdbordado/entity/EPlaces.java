@@ -18,7 +18,16 @@ public class EPlaces implements Serializable{
     private String latLong ;
     private String Ranking ;
     private String urlImage;
+    private String urlLogo;
 
+
+    public String getUrlLogo() {
+        return urlLogo;
+    }
+
+    public void setUrlLogo(String urlLogo) {
+        this.urlLogo = urlLogo;
+    }
 
     public String getUrlImage() {
         return urlImage;

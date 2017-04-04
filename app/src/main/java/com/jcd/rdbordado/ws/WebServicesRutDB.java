@@ -45,8 +45,8 @@ public class WebServicesRutDB {
     MainDrawerActivity activity;
 
 
-    public static final String URL_WEB_SERVICES = "http://www.rutabordado.somee.com/api/";
-    public static final String URL_WEB = "http://www.rutabordado.somee.com/";
+    public static final String URL_WEB_SERVICES = " http://rutadelbordado.somee.com/api/";
+    public static final String URL_WEB = " http://rutadelbordado.somee.com/";
     public static final String URL_WEB_IMAGE = "images/places/";
     //public static final String URL_WEB_SERVICES = "http://192.168.1.110:56394/api/";
     private final String URL_GET_PLACES = "Places/places/";
@@ -163,6 +163,7 @@ public class WebServicesRutDB {
                     places.setLatLong(obj.getString("latLong"));
                     places.setRanking(obj.getString("Ranking"));
                     places.setUrlImage(obj.getString("Url_image"));
+                    places.setUrlLogo(obj.getString("Url_logo"));
 
                     listPlaces.add(places);
                 }

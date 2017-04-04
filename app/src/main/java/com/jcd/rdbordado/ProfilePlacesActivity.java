@@ -67,14 +67,14 @@ public class ProfilePlacesActivity extends Activity implements AdapterView.OnIte
         //gallery.setOnItemSelectedListener(ProfilePlacesActivity.this);
         //gallery.setAdapter(adapterGallery);
         //getListImageBitmap();
-        getBannerPlace();
+        getBannerPlace(place.getUrlLogo());
     }
 
-    private void getBannerPlace() {
+    private void getBannerPlace(String urlLogo) {
 
         DownloadImageBannerTask tasImage = new DownloadImageBannerTask(imProfile, this);
-
-        String url = WebServicesRutDB.URL_WEB + WebServicesRutDB.URL_WEB_IMAGE + place.getId() + "_banner.jpg";
+        //WebServicesRutDB.URL_WEB + WebServicesRutDB.URL_WEB_IMAGE + place.getId() + "_banner.jpg"
+        String url = urlLogo;
         tasImage.execute(url);
 
     }
