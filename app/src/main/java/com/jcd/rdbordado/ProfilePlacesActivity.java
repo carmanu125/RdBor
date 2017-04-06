@@ -14,6 +14,7 @@ import android.widget.AdapterView;
 import android.widget.Gallery;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.jcd.rdbordado.adapters.ImageGalleryAdapter;
 import com.jcd.rdbordado.async.DownloadImageBannerTask;
@@ -23,7 +24,7 @@ import com.jcd.rdbordado.ws.WebServicesRutDB;
 
 import java.util.ArrayList;
 
-public class ProfilePlacesActivity extends Activity implements AdapterView.OnItemSelectedListener {
+public class ProfilePlacesActivity extends Activity implements AdapterView.OnItemSelectedListener, View.OnClickListener {
 
     ImageView imProfile;
     TextView txtDescription;
@@ -31,6 +32,10 @@ public class ProfilePlacesActivity extends Activity implements AdapterView.OnIte
     TextView txtEmail;
     TextView txtName;
     TextView txtShort;
+
+    ImageView btFace;
+    ImageView btTwit;
+    ImageView btInsta;
 
     //public static Gallery gallery;
 
@@ -57,6 +62,11 @@ public class ProfilePlacesActivity extends Activity implements AdapterView.OnIte
         txtName = (TextView) findViewById(R.id.txt_profile_place_name);
         txtShort = (TextView) findViewById(R.id.txt_profile_place_short);
 
+
+        btFace = (ImageView) findViewById(R.id.bt_profile_fb);
+        btInsta = (ImageView) findViewById(R.id.bt_profile_ins);
+        btTwit = (ImageView) findViewById(R.id.bt_profile_tw);
+
         txtDescription.setText(place.getDescription());
         txtAddress.setText(place.getAddress());
         txtEmail.setText(place.getEmail());
@@ -68,6 +78,10 @@ public class ProfilePlacesActivity extends Activity implements AdapterView.OnIte
         //gallery.setAdapter(adapterGallery);
         //getListImageBitmap();
         getBannerPlace(place.getUrlLogo());
+
+        btFace.setOnClickListener(this);
+        btTwit.setOnClickListener(this);
+        btInsta.setOnClickListener(this);
     }
 
     private void getBannerPlace(String urlLogo) {
@@ -136,5 +150,37 @@ public class ProfilePlacesActivity extends Activity implements AdapterView.OnIte
         intent.putExtra("Maps", place);
         setResult(RESULT_OK, intent);
         finish();
+    }
+
+    @Override
+    public void onClick(View v) {
+
+        String urlSocialNetwork = "";
+        switch (v.getId()){
+
+            case R.id.bt_profile_fb:
+                urlSocialNetwork = place.getUrlFace();
+                break;
+            case R.id.bt_profile_tw:
+                urlSocialNetwork = place.getUrlTwit();
+                break;
+            case R.id.bt_profile_ins:
+                urlSocialNetwork = place.getUrlInsta();
+                break;
+        }
+
+        try {
+            if (!urlSocialNetwork.equals("")) {
+                Uri uri = Uri.parse(urlSocialNetwork); // missing 'http://' will cause crashed
+
+                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                startActivity(intent);
+            } else {
+                Toast.makeText(this, "No hay Direccion disponible", Toast.LENGTH_SHORT).show();
+            }
+        }catch (Exception e){
+            Log.e("Error URL: " + urlSocialNetwork + " :: " , e.toString() );
+            Toast.makeText(this, "No hay Direccion disponible", Toast.LENGTH_SHORT).show();
+        }
     }
 }

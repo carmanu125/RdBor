@@ -19,7 +19,34 @@ public class EPlaces implements Serializable{
     private String Ranking ;
     private String urlImage;
     private String urlLogo;
+    private String urlFace;
+    private String urlInsta;
+    private String urlTwit;
 
+
+    public String getUrlFace() {
+        return urlFace;
+    }
+
+    public void setUrlFace(String urlFace) {
+        this.urlFace = urlFace;
+    }
+
+    public String getUrlInsta() {
+        return urlInsta;
+    }
+
+    public void setUrlInsta(String urlInsta) {
+        this.urlInsta = urlInsta;
+    }
+
+    public String getUrlTwit() {
+        return urlTwit;
+    }
+
+    public void setUrlTwit(String urlTwit) {
+        this.urlTwit = urlTwit;
+    }
 
     public String getUrlLogo() {
         return urlLogo;

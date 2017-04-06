@@ -18,7 +18,7 @@ import java.util.List;
 public class RutaDB {
 
     public static String BD_NAME = "RutaDB";
-    public static int BD_VERSION = 2;
+    public static int BD_VERSION = 3;
 
     public static String T_PLACES = "Places";
 
@@ -33,6 +33,9 @@ public class RutaDB {
     public static String KEY_PLA_RANKING = "Ranking";
     public static String KEY_PLA_URL_IMAGE = "Url_image";
     public static String KEY_PLA_URL_LOGO = "Url_Logo";
+    public static String KEY_PLA_URL_FACE = "Facebook";
+    public static String KEY_PLA_URL_INSTA = "Instagram";
+    public static String KEY_PLA_URL_TWIT = "Twitter";
 
 
     private SQLiteDatabase nDb;
@@ -50,7 +53,8 @@ public class RutaDB {
         public void onCreate(SQLiteDatabase db) {
             db.execSQL("CREATE TABLE " + T_PLACES + "(" + KEY_PLA_ID + " INTEGER PRIMARY KEY, " + KEY_PLA_NAME + " TEXT, " + KEY_PLA_SHORT_DESC + " TEXT, " +
                     KEY_PLA_DESC + " VARCHAR(250), " + KEY_PLA_ADDRESS + " VARCHAR(200), " + KEY_PLA_PHONE + " TEXT, " + KEY_PLA_EMAIL + " VARCHAR(200), " +
-                    KEY_PLA_LATLONG + " TEXT, " + KEY_PLA_RANKING + " FLOAT, " + KEY_PLA_URL_IMAGE + " TEXT, " + KEY_PLA_URL_LOGO + " TEXT);");
+                    KEY_PLA_LATLONG + " TEXT, " + KEY_PLA_RANKING + " FLOAT, " + KEY_PLA_URL_IMAGE + " TEXT, " + KEY_PLA_URL_LOGO + " TEXT, " +
+                    KEY_PLA_URL_FACE + " TEXT , " + KEY_PLA_URL_INSTA + " TEXT, " + KEY_PLA_URL_TWIT  +" TEXT);");
         }
 
         @Override
@@ -91,6 +95,9 @@ public class RutaDB {
             cv.put(KEY_PLA_RANKING, places.getRanking());
             cv.put(KEY_PLA_URL_IMAGE, places.getUrlImage());
             cv.put(KEY_PLA_URL_LOGO, places.getUrlLogo());
+            cv.put(KEY_PLA_URL_FACE, places.getUrlFace());
+            cv.put(KEY_PLA_URL_INSTA, places.getUrlInsta());
+            cv.put(KEY_PLA_URL_TWIT, places.getUrlTwit());
 
 
             nDb.insert(T_PLACES,null,cv);
@@ -115,7 +122,9 @@ public class RutaDB {
             place.setRanking(c.getString(8));
             place.setUrlImage(c.getString(9));
             place.setUrlLogo(c.getString(10));
-
+            place.setUrlFace(c.getString(11));
+            place.setUrlInsta(c.getString(12));
+            place.setUrlTwit(c.getString(13));
 
             lisPlaces.add(place);
         }
@@ -141,6 +150,9 @@ public class RutaDB {
             place.setRanking(c.getString(8));
             place.setUrlImage(c.getString(9));
             place.setUrlLogo(c.getString(10));
+            place.setUrlFace(c.getString(11));
+            place.setUrlInsta(c.getString(12));
+            place.setUrlTwit(c.getString(13));
 
             lisPlaces.add(place);
         }

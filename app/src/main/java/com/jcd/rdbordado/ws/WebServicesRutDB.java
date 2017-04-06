@@ -164,6 +164,9 @@ public class WebServicesRutDB {
                     places.setRanking(obj.getString("Ranking"));
                     places.setUrlImage(obj.getString("Url_image"));
                     places.setUrlLogo(obj.getString("Url_logo"));
+                    places.setUrlFace(obj.getString("facebook"));
+                    places.setUrlInsta(obj.getString("instagram"));
+                    places.setUrlTwit(obj.getString("twitter"));
 
                     listPlaces.add(places);
                 }

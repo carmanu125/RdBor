@@ -94,6 +94,9 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback, Google
 
     public static final String EXTRA_CODE = "Maps";
 
+    LocationManager locationManager;
+    Criteria criteria;
+
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -118,6 +121,7 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback, Google
         mapFragment.getMapAsync(MapsActivity.this);
 
         bt_maps_go.setOnClickListener(this);
+        gpsInit();
 
     }
 
@@ -264,6 +268,7 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback, Google
                 .setPositiveButton("Si", new DialogInterface.OnClickListener() {
                     public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
                         startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+
                     }
                 })
                 .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -275,13 +280,49 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback, Google
         alert.show();
     }
 
+
+    private void gpsInit(){
+        locationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
+
+        // Creating a criteria object to retrieve provider
+        criteria = new Criteria();
+
+        // Getting the name of the best provider
+        String provider = locationManager.getBestProvider(criteria, true);
+
+
+        if (ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+
+            // Check Permissions Now
+            ActivityCompat.requestPermissions(getActivity(),
+                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                    REQUEST_LOCATION);
+
+            return;
+        }else {
+            Location location = locationManager.getLastKnownLocation(provider);
+
+            if (location != null) {
+                onLocationChanged(location);
+            }
+            locationManager.requestLocationUpdates(provider, 3000, 5000, this);
+        }
+    }
+
     private void llamarAsyncTask() {
 
         mMap.clear();
-        LocationManager locationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
+        locationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
 
         // Creating a criteria object to retrieve provider
-        Criteria criteria = new Criteria();
+        criteria = new Criteria();
 
         // Getting the name of the best provider
         String provider = locationManager.getBestProvider(criteria, true);
