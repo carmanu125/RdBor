@@ -58,6 +58,7 @@ public class SellsAdapter extends RecyclerView.Adapter<SellsAdapter.SellsHolder>
         TextView txtName ;
         TextView txtType ;
         ImageView imgPhoto;
+        int idImage ;
 
 
         @Override
@@ -74,6 +75,7 @@ public class SellsAdapter extends RecyclerView.Adapter<SellsAdapter.SellsHolder>
             txtName = (TextView) itemView.findViewById(R.id.item_places_name);
             txtType = (TextView) itemView.findViewById(R.id.item_places_type);
             imgPhoto = (ImageView) itemView.findViewById(R.id.item_places_photo);
+            idImage = context.getResources().getIdentifier("logo_cicle", "mipmap", context.getPackageName());
 
             itemView.setOnClickListener(this);
         }
@@ -81,14 +83,19 @@ public class SellsAdapter extends RecyclerView.Adapter<SellsAdapter.SellsHolder>
         public void loadValuesItem(EPlaces places) {
             txtName.setText(places.getName());
             txtType.setText(places.getShort_description());
-            try {
-                Picasso.with(context)
-                        .load(places.getUrlImage())
-                        //.placeholder(R.mipmap.logo_azul)
-                        .error(R.mipmap.logo_cicle)
-                        .into(imgPhoto);
-            } catch (Exception e) {
-                Log.e("Error Picasso: ", e.toString());
+            if(!places.getUrlImage().equals("")) {
+
+                try {
+                    Picasso.with(context)
+                            .load(places.getUrlImage())
+                            //.placeholder(R.mipmap.logo_azul)
+                            .error(R.mipmap.logo_cicle)
+                            .into(imgPhoto);
+                } catch (Exception e) {
+                    Log.e("Error Picasso: ", e.toString());
+                }
+            }else{
+                imgPhoto.setImageResource(idImage);
             }
         }
     }

@@ -171,24 +171,26 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback, Google
         //Ocultando iconos
         mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
 
-        setPlaceRoute();
-        if(placeCurrent != null){
-            trazarRuta();
-        }else {
+        try {
+            setPlaceRoute();
+            if (placeCurrent != null) {
+                trazarRuta();
+            } else {
+                int positionList = 0;
+                for (EPlaces places : listPlaces) {
 
-            int positionList = 0;
-            for (EPlaces places : listPlaces) {
+                    String[] latlong = places.getLatLong().split(",");
+                    double latitudeCurrent = Double.parseDouble(latlong[0]);
+                    double longitudeCurrent = Double.parseDouble(latlong[1]);
+                    String positionCurrent = String.valueOf(positionList);
 
-                String[] latlong = places.getLatLong().split(",");
-                double latitudeCurrent = Double.parseDouble(latlong[0]);
-                double longitudeCurrent = Double.parseDouble(latlong[1]);
-                String positionCurrent = String.valueOf(positionList);
-
-                addMArker(places.getName(), new LatLng(latitudeCurrent, longitudeCurrent), positionCurrent, places.getShort_description());
-                positionList++;
+                    addMArker(places.getName(), new LatLng(latitudeCurrent, longitudeCurrent), positionCurrent, places.getShort_description());
+                    positionList++;
+                }
             }
+        }catch (Exception e){
+            Log.e("Error MApa: ", e.toString());
         }
-
     }
 
     private void addMArker(String tittle, LatLng latLong, String tag, String shortDescription) {
@@ -205,6 +207,8 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback, Google
 
             final Marker newMarker = marker;
             ImageView im = new ImageView(getContext());
+            int id = getContext().getResources().getIdentifier("logo_cicle", "mipmap", getContext().getPackageName());
+            im.setImageResource(id);
             ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(150, 150);
             im.setLayoutParams(params);
             getImagePlace(listPlaces.get(Integer.parseInt(marker.getTag().toString())).getUrlImage(), im);

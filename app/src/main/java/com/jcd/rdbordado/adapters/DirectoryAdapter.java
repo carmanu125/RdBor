@@ -42,7 +42,7 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.Cont
     @Override
     public void onBindViewHolder(ContentHolderDirectory holder, int position) {
         EPlaces places = listPlaces.get(position);
-        holder.loadValuesItem(places);
+        holder.loadValuesItem(places, holder);
     }
 
     @Override
@@ -55,6 +55,7 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.Cont
         TextView txtName;
         TextView txtAddress;
         ImageView imgPhoto;
+        int idImage ;
 
         public ContentHolderDirectory(View itemView) {
             super(itemView);
@@ -62,6 +63,7 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.Cont
             txtName = (TextView) itemView.findViewById(R.id.item_direct_name);
             txtAddress = (TextView) itemView.findViewById(R.id.item_direct_address);
             imgPhoto = (ImageView) itemView.findViewById(R.id.item_direct_photo);
+            idImage = context.getResources().getIdentifier("logo_cicle", "mipmap", context.getPackageName());
 
             itemView.setOnClickListener(this);
         }
@@ -74,17 +76,21 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.Cont
             context.startActivityForResult(intent, 2);
         }
 
-        public void loadValuesItem(EPlaces places) {
+        public void loadValuesItem(EPlaces places, ContentHolderDirectory holder) {
             txtName.setText(places.getName());
             txtAddress.setText(places.getAddress());
-            try {
-                Picasso.with(context.getBaseContext())
-                        .load(places.getUrlImage())
-                        //.placeholder(R.mipmap.logo_azul)
-                        .error(R.mipmap.logo_cicle)
-                        .into(imgPhoto);
-            }catch (Exception e){
-                Log.e("Error Picasso: " , e.toString());
+            if(!places.getUrlImage().equals("")) {
+                try {
+                    Picasso.with(context)
+                            .load(places.getUrlImage())
+                            //.placeholder(R.mipmap.logo_azul)
+                            .error(R.mipmap.logo_cicle)
+                            .into(holder.imgPhoto);
+                } catch (Exception e) {
+                    Log.e("Error Picasso: ", e.toString());
+                }
+            }else{
+                imgPhoto.setImageResource(idImage);
             }
         }
     }

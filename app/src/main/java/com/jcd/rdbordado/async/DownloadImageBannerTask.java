@@ -59,7 +59,8 @@ public class DownloadImageBannerTask extends AsyncTask<String, Void, Bitmap> {
             img.setImageBitmap(bitmap);
             //img.setScaleType(ImageView.ScaleType.FIT_XY);
         }else{
-            Toast.makeText(context, "No hay conexion con el servidor", Toast.LENGTH_SHORT).show();
+
+            //Toast.makeText(context, "No hay conexion con el servidor", Toast.LENGTH_SHORT).show();
         }
 
 

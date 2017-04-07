@@ -43,7 +43,7 @@ public class RankingAdapter extends RecyclerView.Adapter<RankingAdapter.ContentH
     @Override
     public void onBindViewHolder(RankingAdapter.ContentHolder holder, int position) {
         EPlaces places = list.get(position);
-        holder.loadValuesItem(places);
+        holder.loadValuesItem(places, holder);
     }
 
     @Override
@@ -56,16 +56,20 @@ public class RankingAdapter extends RecyclerView.Adapter<RankingAdapter.ContentH
          TextView txtName ;
          TextView txtType ;
          ImageView imgPhoto;
+         int idImage ;
 
-        public ContentHolder(View itemView) {
-            super(itemView);
 
-            txtName = (TextView) itemView.findViewById(R.id.item_places_name);
-            txtType = (TextView) itemView.findViewById(R.id.item_places_type);
-            imgPhoto = (ImageView) itemView.findViewById(R.id.item_places_photo);
+         public ContentHolder(View itemView) {
+             super(itemView);
 
-            itemView.setOnClickListener(this);
-        }
+             txtName = (TextView) itemView.findViewById(R.id.item_places_name);
+             txtType = (TextView) itemView.findViewById(R.id.item_places_type);
+             imgPhoto = (ImageView) itemView.findViewById(R.id.item_places_photo);
+             idImage = context.getResources().getIdentifier("logo_cicle", "mipmap", context.getPackageName());
+
+
+             itemView.setOnClickListener(this);
+         }
 
          @Override
          public void onClick(View v) {
@@ -75,17 +79,22 @@ public class RankingAdapter extends RecyclerView.Adapter<RankingAdapter.ContentH
              context.startActivityForResult(intent, 2);
          }
 
-         public void loadValuesItem(EPlaces places) {
+         public void loadValuesItem(EPlaces places, ContentHolder holder) {
              txtName.setText(places.getName());
              txtType.setText(places.getShort_description());
-             try {
-                 Picasso.with(context)
-                         .load(places.getUrlImage())
-                         //.placeholder(R.mipmap.logo_azul)
-                         .error(R.mipmap.logo_cicle)
-                         .into(imgPhoto);
-             } catch (Exception e) {
-                 Log.e("Error Picasso: ", e.toString());
+             if(!places.getUrlImage().equals("")) {
+
+                 try {
+                     Picasso.with(context)
+                             .load(places.getUrlImage())
+                             //.placeholder(R.mipmap.logo_azul)
+                             .error(R.mipmap.logo_cicle)
+                             .into(holder.imgPhoto);
+                 } catch (Exception e) {
+                     Log.e("Error Picasso: ", e.toString());
+                 }
+             }else {
+                 imgPhoto.setImageResource(idImage);
              }
 
          }
