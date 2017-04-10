@@ -33,7 +33,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Verificar Descuento"
+            android:text="Calificar tu Experiencia"
             android:gravity="center"
             android:layout_margin="5dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
@@ -46,6 +46,7 @@
             android:layout_marginBottom="10dp"/>
 
         <TextView
+            android:visibility="gone"
             android:id="@+id/txt_discount_value"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

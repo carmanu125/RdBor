@@ -78,7 +78,6 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback, Google
     double longitude; // longitude
     int positionSpinner = 0;
 
-    String[] datosSpinner = new String[]{"Frixio","Talle 1","Talle 2","Talle 3","Talle 4","Talle 5"};
 
     Polyline line;
     GoogleApiClient apiClient;
@@ -102,9 +101,16 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback, Google
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        final LocationManager manager = (LocationManager) getActivity().getSystemService( LOCATION_SERVICE );
+
+        if ( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
+            buildAlertMessageNoGps();
+        }
+
+        gpsInit();
+
         nDb = new RutaDB(getContext());
         getListPlaces();
-
 
         spiPlaces = (Spinner) view.findViewById(R.id.spi_maps_location);
         bt_maps_go = (Button) view.findViewById(R.id.bt_maps_go);
@@ -121,15 +127,22 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback, Google
         mapFragment.getMapAsync(MapsActivity.this);
 
         bt_maps_go.setOnClickListener(this);
-        gpsInit();
 
     }
+
+    /*@Override
+    public void onResume() {
+        super.onResume();
+
+        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(MapsActivity.this);
+    }*/
 
     private void setPlaceRoute() {
         try
         {
             placeCurrent = (EPlaces) getArguments().getSerializable(EXTRA_CODE);
-
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -179,12 +192,16 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback, Google
                 int positionList = 0;
                 for (EPlaces places : listPlaces) {
 
-                    String[] latlong = places.getLatLong().split(",");
-                    double latitudeCurrent = Double.parseDouble(latlong[0]);
-                    double longitudeCurrent = Double.parseDouble(latlong[1]);
-                    String positionCurrent = String.valueOf(positionList);
+                    try {
+                        String[] latlong = places.getLatLong().split(",");
+                        double latitudeCurrent = Double.parseDouble(latlong[0]);
+                        double longitudeCurrent = Double.parseDouble(latlong[1]);
+                        String positionCurrent = String.valueOf(positionList);
 
-                    addMArker(places.getName(), new LatLng(latitudeCurrent, longitudeCurrent), positionCurrent, places.getShort_description());
+                        addMArker(places.getName(), new LatLng(latitudeCurrent, longitudeCurrent), positionCurrent, places.getShort_description());
+                    }catch (Exception e){
+                        Log.e("Error MApa: ", e.toString());
+                    }
                     positionList++;
                 }
             }
@@ -245,7 +262,9 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback, Google
             Intent intent = new Intent(getActivity(), ProfilePlacesActivity.class);
             int positionList = Integer.parseInt(marker.getTag().toString());
             intent.putExtra("Place", listPlaces.get(positionList));
-            startActivity(intent);
+            startActivityForResult(intent, 2);
+
+            //startActivity(intent);
             //}
 
         } catch (Exception e) {
@@ -256,12 +275,18 @@ public class MapsActivity extends Fragment implements OnMapReadyCallback, Google
 
     public void trazarRuta() {
 
-        final LocationManager manager = (LocationManager) getActivity().getSystemService( LOCATION_SERVICE );
+        try {
 
-        if ( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
-            buildAlertMessageNoGps();
-        }else{
-            llamarAsyncTask();
+            final LocationManager manager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
+
+            if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                buildAlertMessageNoGps();
+            } else {
+                llamarAsyncTask();
+            }
+        }catch (Exception e){
+            Log.e("Error MAPS: ", e.toString());
+            Toast.makeText(getContext(), "No hay Coordenadas Disponibles", Toast.LENGTH_SHORT).show();
         }
     }
 

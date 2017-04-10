@@ -4,19 +4,15 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_inicia"
-            android:icon="@drawable/ic_menu_camera"
+            android:icon="@mipmap/main_map"
             android:title="Inicia" />
         <item
             android:id="@+id/nav_ranking"
-            android:icon="@drawable/ic_menu_gallery"
+            android:icon="@mipmap/main_ranking"
             android:title="Ranking" />
         <item
-            android:id="@+id/nav_compras"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Compras" />
-        <item
             android:id="@+id/nav_directorio"
-            android:icon="@drawable/ic_menu_slideshow"
+            android:icon="@mipmap/main_contact"
             android:title="Directorio" />
     </group>
 

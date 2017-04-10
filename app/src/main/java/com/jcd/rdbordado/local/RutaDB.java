@@ -104,10 +104,37 @@ public class RutaDB {
         }
     }
 
+    public List<EPlaces> listPlacesSpimmer (){
+        List<EPlaces> lisPlaces = new ArrayList<>();
+
+        Cursor c = nDb.rawQuery("select * from " + T_PLACES + " order by " + KEY_PLA_NAME + "   ", null);
+        for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()){
+            EPlaces place = new EPlaces();
+
+            place.setId(c.getInt(0));
+            place.setName(c.getString(1));
+            place.setShort_description(c.getString(2));
+            place.setDescription(c.getString(3));
+            place.setAddress(c.getString(4));
+            place.setPhone(c.getString(5));
+            place.setEmail(c.getString(6));
+            place.setLatLong(c.getString(7));
+            place.setRanking(c.getString(8));
+            place.setUrlImage(c.getString(9));
+            place.setUrlLogo(c.getString(10));
+            place.setUrlFace(c.getString(11));
+            place.setUrlInsta(c.getString(12));
+            place.setUrlTwit(c.getString(13));
+
+            lisPlaces.add(place);
+        }
+
+        return lisPlaces;
+    }
     public List<EPlaces> listPlaces (){
         List<EPlaces> lisPlaces = new ArrayList<>();
 
-        Cursor c = nDb.rawQuery("select * from " + T_PLACES + " order by " + KEY_PLA_NAME + " desc", null);
+        Cursor c = nDb.rawQuery("select * from " + T_PLACES + " order by " + KEY_PLA_NAME + "   ", null);
         for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()){
             EPlaces place = new EPlaces();
 
@@ -134,7 +161,8 @@ public class RutaDB {
 
     public List<EPlaces> listPlacesTop10(){
         List<EPlaces> lisPlaces = new ArrayList<>();
-
+        //String[] rank = new String[]{ KEY_PLA_NAME };
+        //Cursor c = nDb.query(T_PLACES, null, null, null, null, null, KEY_PLA_RANKING+" DESC");
         Cursor c = nDb.rawQuery("select * from " + T_PLACES + " order by " + KEY_PLA_RANKING + " desc limit 10", null);
         for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()){
             EPlaces place = new EPlaces();

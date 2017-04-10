@@ -98,43 +98,18 @@
         android:background="#c2c3c8"
         android:layout_marginBottom="10dp"/>
 
-    <LinearLayout
+    <Button
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:background="@color/colorPrimary"
+        android:text="Productos"
+        android:textColor="@android:color/white"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+        android:onClick="GaleryProduct"
+        android:id="@+id/bt_profile_gallery" />
 
-        <ImageView
-            android:padding="5dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:layout_width="0dp"
-            android:layout_weight="3"
-            android:layout_height="match_parent"
-            android:background="@color/colorPrimary"
-            android:src="@mipmap/facebook_white"
-            android:id="@+id/bt_profile_fb" />
-
-        <ImageView
-            android:padding="5dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:layout_width="0dp"
-            android:layout_weight="3"
-            android:layout_height="match_parent"
-            android:src="@mipmap/twitter"
-            android:background="@color/colorPrimary"
-            android:id="@+id/bt_profile_tw" />
-
-        <ImageView
-            android:layout_marginRight="10dp"
-            android:layout_width="0dp"
-            android:layout_weight="3"
-            android:layout_height="match_parent"
-            android:src="@mipmap/instagram_white"
-            android:background="@color/colorPrimary"
-            android:scaleType="center"
-            android:id="@+id/bt_profile_ins"/>
-    </LinearLayout>
 
     <ScrollView
 
@@ -159,9 +134,38 @@
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
                 android:textColor="@android:color/black"/>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:padding="5dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_width="0dp"
+                    android:layout_weight="3"
+                    android:layout_height="match_parent"
+                    android:background="@color/colorPrimary"
+                    android:src="@mipmap/facebook_white"
+                    android:id="@+id/bt_profile_fb" />
+
+                <ImageView
+                    android:layout_marginRight="10dp"
+                    android:layout_width="0dp"
+                    android:layout_weight="3"
+                    android:layout_height="match_parent"
+                    android:src="@mipmap/instagram_white"
+                    android:background="@color/colorPrimary"
+                    android:scaleType="center"
+                    android:id="@+id/bt_profile_ins"/>
+            </LinearLayout>
+
+
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp">
 
                 <ImageView
                     android:layout_width="100dp"
@@ -229,6 +233,8 @@
                 android:textSize="25sp"
                 android:layout_toRightOf="@id/im_profile_icon2"
                 android:autoLink="all"
+                android:textColor="@color/colorPrimary"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:layout_below="@id/txt_profile_place_web_site"/>
 
             </RelativeLayout>

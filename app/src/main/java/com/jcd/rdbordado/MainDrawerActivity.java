@@ -108,10 +108,7 @@ public class MainDrawerActivity extends AppCompatActivity
         } else if (id == R.id.nav_ranking) {
             fragment = new RankingActivity();
 
-        } else if (id == R.id.nav_compras) {
-            fragment = new SellActivity();
-
-        } else if (id == R.id.nav_directorio) {
+        }  else if (id == R.id.nav_directorio) {
             fragment = new DirectoryActivity();
         }
 /*
@@ -138,7 +135,7 @@ public class MainDrawerActivity extends AppCompatActivity
         System.out.println("the code is catch");
 
 
-        if (requestCode == 2) {
+        //if (requestCode == 2) {
             if (resultCode == RESULT_OK) {
 
                 FragmentManager fm = getSupportFragmentManager();
@@ -147,6 +144,6 @@ public class MainDrawerActivity extends AppCompatActivity
 
                 fm.beginTransaction().replace(R.id.flContent, newFrame).commit();
             }
-        }
+        //}
     }
 }

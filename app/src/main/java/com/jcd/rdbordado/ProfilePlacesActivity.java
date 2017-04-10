@@ -34,7 +34,7 @@ public class ProfilePlacesActivity extends Activity implements AdapterView.OnIte
     TextView txtShort;
 
     ImageView btFace;
-    ImageView btTwit;
+    //ImageView btTwit;
     ImageView btInsta;
 
     //public static Gallery gallery;
@@ -65,7 +65,7 @@ public class ProfilePlacesActivity extends Activity implements AdapterView.OnIte
 
         btFace = (ImageView) findViewById(R.id.bt_profile_fb);
         btInsta = (ImageView) findViewById(R.id.bt_profile_ins);
-        btTwit = (ImageView) findViewById(R.id.bt_profile_tw);
+        //btTwit = (ImageView) findViewById(R.id.bt_profile_tw);
 
         txtDescription.setText(place.getDescription());
         txtAddress.setText(place.getAddress());
@@ -80,7 +80,7 @@ public class ProfilePlacesActivity extends Activity implements AdapterView.OnIte
         getBannerPlace(place.getUrlLogo());
 
         btFace.setOnClickListener(this);
-        btTwit.setOnClickListener(this);
+        //btTwit.setOnClickListener(this);
         btInsta.setOnClickListener(this);
     }
 
@@ -161,9 +161,7 @@ public class ProfilePlacesActivity extends Activity implements AdapterView.OnIte
             case R.id.bt_profile_fb:
                 urlSocialNetwork = place.getUrlFace();
                 break;
-            case R.id.bt_profile_tw:
-                urlSocialNetwork = place.getUrlTwit();
-                break;
+
             case R.id.bt_profile_ins:
                 urlSocialNetwork = place.getUrlInsta();
                 break;
@@ -182,5 +180,12 @@ public class ProfilePlacesActivity extends Activity implements AdapterView.OnIte
             Log.e("Error URL: " + urlSocialNetwork + " :: " , e.toString() );
             Toast.makeText(this, "No hay Direccion disponible", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    public void GaleryProduct(View view) {
+
+        WebServicesRutDB webServicesRutDB = new WebServicesRutDB(this);
+        webServicesRutDB.getPlacesImage(String.valueOf(place.getId()));
+
     }
 }
